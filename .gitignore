@@ -37,3 +37,4 @@ coverage/
 # Windows
 Thumbs.db
 Desktop.ini
+.vercel

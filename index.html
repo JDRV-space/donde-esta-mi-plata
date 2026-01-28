@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>Dónde está mi plata?</title>
+    <!-- TODO: Migrate to PostCSS + Tailwind build for production -->
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'retro-amber': '#FFBF00',      /* Primary Amber (Sol-20 style) */
+              'retro-orange': '#D94F00',     /* Sol-20 Orange/Red (Text on white) */
+              'retro-dark': '#0F0F0F',       /* Chassis Black */
+              'retro-paper': '#F7F5E6',      /* Magazine Paper */
+              'retro-gray': '#333333',
+            },
+            fontFamily: {
+              'serif': ['"Merriweather"', 'serif'],
+              'mono': ['"Courier Prime"', '"Courier New"', 'monospace'],
+            },
+            boxShadow: {
+              'retro': '4px 4px 0px 0px #000000',
+              'retro-sm': '2px 2px 0px 0px #000000',
+            }
+          }
+        }
+      }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+      /* Mobile optimization */
+      body, html, #root { 
+        height: 100%; 
+        overflow: hidden; 
+        background-color: #F7F5E6; /* Retro paper */
+        font-family: 'Courier Prime', monospace;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Merriweather', serif;
+      }
+
+      .leaflet-container { 
+        width: 100%; 
+        height: 100%; 
+        z-index: 0; 
+      }
+      
+      /* Retro Scrollbar */
+      ::-webkit-scrollbar {
+        width: 12px;
+        background: #000;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #D94F00;
+        border: 2px solid #000;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

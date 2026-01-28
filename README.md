@@ -4,9 +4,7 @@
 
 # Donde Esta Mi Plata?
 
-### Where Is My Money?
-
-*Citizen-powered budget transparency for Lima, Peru*
+Where Is My Money? Citizen-powered budget transparency for Lima, Peru.
 
 [![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -18,21 +16,17 @@
 
 **[Report Bug](https://github.com/JDRV-space/donde-esta-mi-plata/issues/new?template=bug_report.md)** · **[Request Feature](https://github.com/JDRV-space/donde-esta-mi-plata/issues/new?template=feature_request.md)**
 
----
-
 </div>
 
 ## Overview
 
-**Donde Esta Mi Plata?** turns your phone into a budget-aware civic reporting tool. Point your camera at a pothole, broken streetlight, or overflowing trash -- **Gemini AI** instantly analyzes the photo, categorizes the problem across 7 infrastructure types, estimates repair costs in Soles, and scores severity 1-5.
+**Donde Esta Mi Plata?** turns your phone into a budget-aware civic reporting tool. Point your camera at a pothole, broken streetlight, or overflowing trash and **Gemini AI** instantly analyzes the photo, categorizes the problem across 7 infrastructure types, estimates repair costs in Soles, and scores severity 1-5.
 
-The AI cross-references your complaint against **actual budget execution data** for your district, showing exactly how much was allocated vs. spent -- giving you the evidence to hold your municipality accountable under Transparency Law 27806.
+The AI cross-references your complaint against **actual budget execution data** for your district, showing exactly how much was allocated vs. spent. This gives you the evidence to hold your municipality accountable under Transparency Law 27806.
 
 Budget data sourced from Peru's **Ministry of Economy and Finance (MEF)**. Structured JSON output. Multimodal AI that turns citizen photos into actionable government intelligence.
 
-**Built for Lima's 43 districts. Starting with Lima -- your city: next.**
-
----
+**Built for Lima's 43 districts. Starting with Lima, your city next.**
 
 ## Features
 
@@ -45,9 +39,8 @@ Budget data sourced from Peru's **Ministry of Economy and Finance (MEF)**. Struc
 | **Interactive Map** | District-level budget visualization across all 43 Lima districts |
 | **Economic Indicators** | Real-time exchange rate and inflation data from BCRP (Peru Central Bank) |
 | **Multi-Language** | Spanish, English, and Quechua support for 700K+ indigenous citizens in Lima |
-| **Zero Backend** | 100% client-side processing -- your photos never leave your browser |
+| **Zero Backend** | 100% client-side processing, your photos never leave your browser |
 
----
 
 ## Tech Stack
 
@@ -61,10 +54,9 @@ Budget data sourced from Peru's **Ministry of Economy and Finance (MEF)**. Struc
 | **Maps** | [React Leaflet](https://react-leaflet.js.org/) + [Leaflet](https://leafletjs.com/) |
 | **Styling** | [Tailwind CSS 3](https://tailwindcss.com/) |
 | **Screenshots** | [html2canvas](https://html2canvas.hertzen.com/) |
-| **Data Source** | [MEF Peru](https://www.mef.gob.pe/) -- Ministry of Economy and Finance |
+| **Data Source** | [MEF Peru](https://www.mef.gob.pe/) (Ministry of Economy and Finance) |
 | **Typography** | [Merriweather](https://fonts.google.com/specimen/Merriweather) + [Courier Prime](https://fonts.google.com/specimen/Courier+Prime) |
 
----
 
 ## Quick Start
 
@@ -102,7 +94,6 @@ npm run build
 
 Output will be in the `dist/` directory.
 
----
 
 ## Environment Variables
 
@@ -114,7 +105,6 @@ Copy `.env.example` to `.env.local` and fill in your values:
 | `SUPABASE_URL` | Supabase project URL | Yes |
 | `SUPABASE_ANON_KEY` | Supabase anonymous key | Yes |
 
----
 
 ## Project Structure
 
@@ -147,7 +137,6 @@ donde-esta-mi-plata/
 └── LICENSE                        # MIT License
 ```
 
----
 
 ## How It Works
 
@@ -165,25 +154,22 @@ donde-esta-mi-plata/
 6. Send to municipality via email with tracking code
 ```
 
----
 
 ## Legal Framework
 
-- **Ley 27806** -- Ley de Transparencia y Acceso a la Informacion Publica
-- **Ley 27444** -- Ley del Procedimiento Administrativo General
-- **Ley 27785** -- Ley Organica del Sistema Nacional de Control y de la Contraloria General de la Republica
+- **Ley 27806:** Ley de Transparencia y Acceso a la Informacion Publica
+- **Ley 27444:** Ley del Procedimiento Administrativo General
+- **Ley 27785:** Ley Organica del Sistema Nacional de Control y de la Contraloria General de la Republica
 
----
 
 ## Security
 
-- **Client-Side Processing** -- Photos analyzed locally via Gemini API, never stored on a server
-- **Environment Variables** -- All API keys stored in `.env.local`, never committed to git
-- **XSS Prevention** -- React's built-in output escaping
-- **Parameterized Queries** -- Supabase SDK prevents SQL injection
-- **No PII Storage** -- No personally identifiable information persisted
+- **Client-Side Processing:** Photos analyzed locally via Gemini API, never stored on a server
+- **Environment Variables:** All API keys stored in `.env.local`, never committed to git
+- **XSS Prevention:** React's built-in output escaping
+- **Parameterized Queries:** Supabase SDK prevents SQL injection
+- **No PII Storage:** No personally identifiable information persisted
 
----
 
 ## Contributing
 
@@ -195,36 +181,31 @@ Contributions are welcome. Please read the [Contributing Guide](CONTRIBUTING.md)
 4. Push to the branch (`git push origin feature/your-feature`)
 5. Open a Pull Request
 
----
 
 ## License
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
----
 
 ## Authors
 
-**Juan Diego Rodriguez** -- [@JDRV-space](https://github.com/JDRV-space)
+**Juan Diego Rodriguez** [@JDRV-space](https://github.com/JDRV-space)
 
-**mmhc** -- [@mmhc14](https://github.com/mmhc14)
+**mmhc** [@mmhc14](https://github.com/mmhc14)
 
----
 
 ## Roadmap
 
 Planned features for future releases:
 
-- [ ] **Smart Routing** -- Automatically route complaints to municipality if funds exist, or to Contraloria General if budget is depleted
-- [ ] **Auto-Escalation Pipeline** -- Municipality -> Comptroller -> Press with 10-day deadlines per stage
-- [ ] **Supabase Report Persistence** -- Store citizen reports in a writable backend table
-- [ ] **PostCSS + Tailwind Build** -- Replace CDN Tailwind with a proper build step for production
-- [ ] **Deployed Live Demo** -- Host the app at a public URL
-
----
+- [ ] **Smart Routing:** Automatically route complaints to municipality if funds exist, or to Contraloria General if budget is depleted
+- [ ] **Auto-Escalation Pipeline:** Municipality -> Comptroller -> Press with 10-day deadlines per stage
+- [ ] **Supabase Report Persistence:** Store citizen reports in a writable backend table
+- [ ] **PostCSS + Tailwind Build:** Replace CDN Tailwind with a proper build step for production
+- [ ] **Deployed Live Demo:** Host the app at a public URL
 
 <div align="center">
 
-*Donde esta mi plata? -- demand accountability, one photo at a time.*
+*Donde esta mi plata? Demand accountability, one photo at a time.*
 
 </div>

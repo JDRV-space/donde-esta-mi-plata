@@ -1,55 +1,117 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 180">
-  <style>
-    @keyframes barGrow1 { 0%, 20% { height: 0; y: 120; } 40%, 100% { height: 55; y: 65; } }
-    @keyframes barGrow2 { 0%, 30% { height: 0; y: 120; } 50%, 100% { height: 35; y: 85; } }
-    @keyframes barGrow3 { 0%, 40% { height: 0; y: 120; } 60%, 100% { height: 50; y: 70; } }
-    @keyframes barGrow4 { 0%, 50% { height: 0; y: 120; } 70%, 100% { height: 20; y: 100; } }
-    @keyframes gapFlash { 0%, 70% { opacity: 0; } 80%, 90% { opacity: 1; } 100% { opacity: 0.6; } }
-    .bar-allocated { fill: #ffffff; opacity: 0.8; }
-    .bar-spent { fill: #d91023; }
-    .b1a { animation: barGrow1 4s ease-out infinite; }
-    .b2a { animation: barGrow2 4s ease-out infinite; }
-    .b3a { animation: barGrow3 4s ease-out infinite; }
-    .b4a { animation: barGrow4 4s ease-out infinite; }
-    .b1s { animation: barGrow2 4s ease-out infinite; }
-    .b2s { animation: barGrow4 4s ease-out infinite; }
-    .b3s { animation: barGrow2 4s ease-out infinite; }
-    .b4s { animation: barGrow4 4s ease-out infinite; }
-    .gap-highlight { animation: gapFlash 4s ease-in-out infinite; }
-  </style>
-  <rect width="800" height="180" fill="#0d1117"/>
-  <!-- Title in confrontational red -->
-  <text x="280" y="55" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="30" font-weight="900" fill="#d91023" letter-spacing="4">DONDE ESTA</text>
-  <text x="280" y="90" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="30" font-weight="900" fill="#d91023" letter-spacing="4">MI PLATA</text>
-  <!-- Question mark -->
-  <text x="420" y="82" font-family="'Segoe UI', Arial, sans-serif" font-size="50" font-weight="900" fill="#d91023" opacity="0.3">?</text>
-  <!-- Animated budget bar chart -->
-  <g transform="translate(530, 0)">
-    <!-- Axes -->
-    <line x1="30" y1="120" x2="210" y2="120" stroke="#333" stroke-width="1"/>
-    <!-- Bar pairs: allocated (white) vs spent (red) -->
-    <!-- Bar 1 -->
-    <rect x="42" width="16" class="bar-allocated b1a"/>
-    <rect x="60" width="16" class="bar-spent b1s"/>
-    <!-- Bar 2 -->
-    <rect x="88" width="16" class="bar-allocated b2a"/>
-    <rect x="106" width="16" class="bar-spent b2s"/>
-    <!-- Bar 3 -->
-    <rect x="134" width="16" class="bar-allocated b3a"/>
-    <rect x="152" width="16" class="bar-spent b3s"/>
-    <!-- Bar 4 -->
-    <rect x="180" width="16" class="bar-allocated b4a"/>
-    <rect x="198" width="16" class="bar-spent b4s"/>
-    <!-- Gap highlight -->
-    <rect x="38" y="55" width="180" height="5" rx="2" fill="#d91023" class="gap-highlight" opacity="0"/>
-    <!-- Legend -->
-    <rect x="50" y="130" width="8" height="8" fill="#ffffff" opacity="0.8"/>
-    <text x="62" y="138" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#8b949e">Allocated</text>
-    <rect x="110" y="130" width="8" height="8" fill="#d91023"/>
-    <text x="122" y="138" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#8b949e">Spent</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 180" fill="none">
+  <defs>
+    <!-- Colors extracted from donde-esta-mi-plata/index.html tailwind.config -->
+    <!-- retro-amber: #FFBF00, retro-orange: #D94F00, retro-dark: #0F0F0F -->
+    <!-- retro-paper: #F7F5E6, retro-gray: #333333 -->
+    <!-- Fonts: Merriweather (serif, headings), Courier Prime (mono, body) -->
+    <!-- Shadow style: 4px 4px 0px 0px #000000 -->
+    <!-- Scrollbar thumb: #D94F00 with #000 border -->
+    <style>
+      @keyframes barGrow1 { 0%,15% { height: 0; } 35%,100% { height: 46; } }
+      @keyframes barGrow2 { 0%,25% { height: 0; } 45%,100% { height: 30; } }
+      @keyframes barGrow3 { 0%,35% { height: 0; } 55%,100% { height: 52; } }
+      @keyframes barGrow4 { 0%,45% { height: 0; } 65%,100% { height: 18; } }
+      @keyframes barSpent1 { 0%,20% { height: 0; } 50%,100% { height: 22; } }
+      @keyframes barSpent2 { 0%,30% { height: 0; } 55%,100% { height: 8; } }
+      @keyframes barSpent3 { 0%,40% { height: 0; } 60%,100% { height: 30; } }
+      @keyframes barSpent4 { 0%,50% { height: 0; } 70%,100% { height: 6; } }
+      @keyframes gapFlash { 0%,65% { opacity: 0; } 75%,92% { opacity: 1; } 100% { opacity: 0; } }
+      .b1 { animation: barGrow1 5s ease-out infinite; }
+      .b2 { animation: barGrow2 5s ease-out infinite; }
+      .b3 { animation: barGrow3 5s ease-out infinite; }
+      .b4 { animation: barGrow4 5s ease-out infinite; }
+      .s1 { animation: barSpent1 5s ease-out infinite; }
+      .s2 { animation: barSpent2 5s ease-out infinite; }
+      .s3 { animation: barSpent3 5s ease-out infinite; }
+      .s4 { animation: barSpent4 5s ease-out infinite; }
+      .gap-mark { animation: gapFlash 5s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- Background: retro-dark #0F0F0F (the app header bg) -->
+  <rect width="800" height="180" fill="#0F0F0F"/>
+
+  <!-- Top amber border (from header: border-b-4 border-retro-amber) -->
+  <rect x="0" y="0" width="800" height="4" fill="#FFBF00"/>
+
+  <!-- Title block with retro shadow (shadow-retro: 4px 4px 0px 0px #000) -->
+  <!-- App header uses: font-serif font-black text-xl tracking-tighter uppercase -->
+  <text x="66" y="58" font-family="'Merriweather',Georgia,serif" font-size="28" font-weight="900"
+        fill="#FFBF00" letter-spacing="-0.04em" text-transform="uppercase">DONDE ESTA</text>
+  <text x="66" y="92" font-family="'Merriweather',Georgia,serif" font-size="28" font-weight="900"
+        fill="#FFBF00" letter-spacing="-0.04em" text-transform="uppercase">MI PLATA?</text>
+
+  <!-- Version badge (from app: bg-retro-amber text-black, border-2 border-retro-paper, shadow) -->
+  <rect x="336" y="38" width="48" height="22" fill="#FFBF00"/>
+  <rect x="340" y="42" width="48" height="22" fill="none" stroke="#F7F5E6" stroke-width="1.5"/>
+  <text x="360" y="54" font-family="'Courier Prime','Courier New',monospace" font-size="10" font-weight="700"
+        fill="#0F0F0F" text-anchor="middle">V.2.0</text>
+
+  <!-- Language switcher mockup (from app: bg-black border border-retro-amber) -->
+  <g transform="translate(64, 104)">
+    <rect x="0" y="0" width="84" height="20" fill="#000000" stroke="#FFBF00" stroke-width="0.5"/>
+    <!-- Active language (bg-retro-amber text-black) -->
+    <rect x="1" y="1" width="26" height="18" fill="#FFBF00"/>
+    <text x="14" y="14" font-family="'Courier Prime',monospace" font-size="8" font-weight="700"
+          fill="#000000" text-anchor="middle">ES</text>
+    <!-- Inactive languages (text-retro-amber) -->
+    <text x="42" y="14" font-family="'Courier Prime',monospace" font-size="8" font-weight="700"
+          fill="#FFBF00" text-anchor="middle">EN</text>
+    <text x="70" y="14" font-family="'Courier Prime',monospace" font-size="8" font-weight="700"
+          fill="#FFBF00" text-anchor="middle">QU</text>
   </g>
-  <!-- Tagline -->
-  <text x="280" y="120" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="13" fill="#8b949e">Government budget transparency for Peru</text>
-  <!-- Peru stripe accent -->
-  <rect x="0" y="175" width="800" height="5" fill="#d91023" opacity="0.4"/>
+
+  <!-- Navigation tabs mockup (from app: bg-black, border-2 border-retro-gray) -->
+  <g transform="translate(64, 132)">
+    <rect x="0" y="0" width="200" height="28" fill="#000000" stroke="#333333" stroke-width="1.5"/>
+    <!-- Active tab (bg-retro-amber text-black, shadow, translate-y) -->
+    <rect x="3" y="1" width="96" height="24" fill="#FFBF00" stroke="#F7F5E6" stroke-width="1"/>
+    <text x="51" y="17" font-family="'Courier Prime',monospace" font-size="9" font-weight="700"
+          fill="#0F0F0F" text-anchor="middle">REPORTAR</text>
+    <!-- Inactive tab -->
+    <rect x="101" y="3" width="96" height="22" fill="#0F0F0F"/>
+    <text x="149" y="17" font-family="'Courier Prime',monospace" font-size="9" font-weight="700"
+          fill="#555555" text-anchor="middle">MAPA</text>
+  </g>
+
+  <!-- Budget chart (matches the civic data / budget transparency purpose) -->
+  <g transform="translate(460, 14)">
+    <!-- Chart background (retro-paper tint) -->
+    <rect x="0" y="0" width="300" height="150" rx="0" fill="#F7F5E6" fill-opacity="0.03"
+          stroke="#333333" stroke-width="1"/>
+
+    <!-- Chart title -->
+    <text x="150" y="20" font-family="'Merriweather',serif" font-size="10" font-weight="700"
+          fill="#FFBF00" text-anchor="middle" letter-spacing="0.05em">PRESUPUESTO vs EJECUTADO</text>
+
+    <!-- Baseline axis -->
+    <line x1="30" y1="120" x2="270" y2="120" stroke="#333333" stroke-width="1"/>
+
+    <!-- Allocated bars (retro-paper color) -->
+    <rect x="46" y="74" width="18" fill="#F7F5E6" fill-opacity="0.7" class="b1"/>
+    <rect x="106" y="90" width="18" fill="#F7F5E6" fill-opacity="0.7" class="b2"/>
+    <rect x="166" y="68" width="18" fill="#F7F5E6" fill-opacity="0.7" class="b3"/>
+    <rect x="226" y="102" width="18" fill="#F7F5E6" fill-opacity="0.7" class="b4"/>
+
+    <!-- Spent bars (retro-orange #D94F00) -->
+    <rect x="66" y="98" width="18" fill="#D94F00" class="s1"/>
+    <rect x="126" y="112" width="18" fill="#D94F00" class="s2"/>
+    <rect x="186" y="90" width="18" fill="#D94F00" class="s3"/>
+    <rect x="246" y="114" width="18" fill="#D94F00" class="s4"/>
+
+    <!-- Gap markers that flash (showing budget gaps) -->
+    <text x="75" y="92" font-family="'Courier Prime',monospace" font-size="7" fill="#D94F00"
+          text-anchor="middle" class="gap-mark" opacity="0">GAP</text>
+    <text x="255" y="98" font-family="'Courier Prime',monospace" font-size="7" fill="#D94F00"
+          text-anchor="middle" class="gap-mark" opacity="0">GAP</text>
+
+    <!-- Legend -->
+    <rect x="60" y="132" width="8" height="8" fill="#F7F5E6" fill-opacity="0.7"/>
+    <text x="72" y="140" font-family="'Courier Prime',monospace" font-size="8" fill="#F7F5E6" fill-opacity="0.5">PIM</text>
+    <rect x="160" y="132" width="8" height="8" fill="#D94F00"/>
+    <text x="172" y="140" font-family="'Courier Prime',monospace" font-size="8" fill="#F7F5E6" fill-opacity="0.5">Devengado</text>
+  </g>
+
+  <!-- Bottom amber border (mirroring top) -->
+  <rect x="0" y="176" width="800" height="4" fill="#FFBF00"/>
 </svg>

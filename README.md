@@ -6,6 +6,12 @@
 
 Where Is My Money? Citizen-powered budget transparency for Lima, Peru.
 
+<p>
+  <img src="https://readme-typing-svg.demolab.com/?font=Inter&weight=700&size=22&duration=2500&pause=1000&color=D91023&center=true&vCenter=true&width=700&lines=%F0%9F%93%B1+Point+your+phone+at+a+pothole;%F0%9F%A4%96+Gemini+AI+analyzes+the+damage;%F0%9F%92%B0+Cross-references+municipal+budget;%F0%9F%92%A2+Shows+where+YOUR+tax+money+went" alt="Typing SVG" />
+</p>
+
+<img src="./assets/budget-reality.svg" alt="Budget vs Reality" width="100%"/>
+
 [![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Gemini AI](https://img.shields.io/badge/Gemini_AI-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
@@ -203,6 +209,8 @@ Planned features for future releases:
 - [ ] **Supabase Report Persistence:** Store citizen reports in a writable backend table
 - [ ] **PostCSS + Tailwind Build:** Replace CDN Tailwind with a proper build step for production
 - [ ] **Deployed Live Demo:** Host the app at a public URL
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a1a2e,100:d91023&height=120&section=footer" width="100%"/>
 
 <div align="center">
 

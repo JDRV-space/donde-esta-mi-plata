@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 250" width="800" height="250">
+  <style>
+    @keyframes growFull { from { width: 0; } to { width: 480px; } }
+    @keyframes growPartial { from { width: 0; } to { width: 144px; } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes blink-q { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .bg { fill: #0d1117; }
+    .title { fill: #fff; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 16px; font-weight: 700; }
+    .bar-label { fill: #aaa; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; }
+    .bar-value { font-family: 'Courier New', monospace; font-size: 14px; font-weight: 700; }
+    .bar-track { fill: #1a1a2e; rx: 6; }
+    .bar-allocated { fill: #00c853; rx: 6; animation: growFull 2s ease-out both; }
+    .bar-spent { fill: #d91023; rx: 6; animation: growPartial 2s 0.5s ease-out both; }
+    .gap-label { fill: #ff5252; font-family: 'Courier New', monospace; font-size: 20px; font-weight: 900; animation: fadeIn 1s 2.5s both; }
+    .gap-line { stroke: #ff5252; stroke-width: 1; stroke-dasharray: 5,5; animation: fadeIn 1s 2.5s both; }
+    .question { fill: #d91023; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 18px; font-weight: 900; animation: blink-q 2s 3s infinite; }
+  </style>
+  <rect class="bg" width="800" height="250" rx="16"/>
+  <text class="title" x="40" y="40">Lima District Budget: Road Infrastructure 2025</text>
+  <text class="bar-label" x="40" y="85">Allocated</text>
+  <rect class="bar-track" x="160" y="70" width="480" height="24"/>
+  <rect class="bar-allocated" x="160" y="70" height="24"/>
+  <text class="bar-value" x="650" y="87" style="fill:#00c853;">S/. 2.4M (100%)</text>
+  <text class="bar-label" x="40" y="135">Spent on Roads</text>
+  <rect class="bar-track" x="160" y="120" width="480" height="24"/>
+  <rect class="bar-spent" x="160" y="120" height="24"/>
+  <text class="bar-value" x="650" y="137" style="fill:#d91023; animation: fadeIn 1s 2.5s both;">S/. 720K (30%)</text>
+  <line class="gap-line" x1="304" y1="150" x2="304" y2="185"/>
+  <line class="gap-line" x1="640" y1="150" x2="640" y2="185"/>
+  <line class="gap-line" x1="304" y1="185" x2="640" y2="185"/>
+  <text class="gap-label" x="420" y="210" style="text-anchor:middle;">S/. 1.68M missing</text>
+  <text class="question" x="400" y="240" text-anchor="middle">Donde esta mi plata?</text>
+</svg>

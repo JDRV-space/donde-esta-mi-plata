@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 180">
+  <style>
+    @keyframes barGrow1 { 0%, 20% { height: 0; y: 120; } 40%, 100% { height: 55; y: 65; } }
+    @keyframes barGrow2 { 0%, 30% { height: 0; y: 120; } 50%, 100% { height: 35; y: 85; } }
+    @keyframes barGrow3 { 0%, 40% { height: 0; y: 120; } 60%, 100% { height: 50; y: 70; } }
+    @keyframes barGrow4 { 0%, 50% { height: 0; y: 120; } 70%, 100% { height: 20; y: 100; } }
+    @keyframes gapFlash { 0%, 70% { opacity: 0; } 80%, 90% { opacity: 1; } 100% { opacity: 0.6; } }
+    .bar-allocated { fill: #ffffff; opacity: 0.8; }
+    .bar-spent { fill: #d91023; }
+    .b1a { animation: barGrow1 4s ease-out infinite; }
+    .b2a { animation: barGrow2 4s ease-out infinite; }
+    .b3a { animation: barGrow3 4s ease-out infinite; }
+    .b4a { animation: barGrow4 4s ease-out infinite; }
+    .b1s { animation: barGrow2 4s ease-out infinite; }
+    .b2s { animation: barGrow4 4s ease-out infinite; }
+    .b3s { animation: barGrow2 4s ease-out infinite; }
+    .b4s { animation: barGrow4 4s ease-out infinite; }
+    .gap-highlight { animation: gapFlash 4s ease-in-out infinite; }
+  </style>
+  <rect width="800" height="180" fill="#0d1117"/>
+  <!-- Title in confrontational red -->
+  <text x="280" y="55" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="30" font-weight="900" fill="#d91023" letter-spacing="4">DONDE ESTA</text>
+  <text x="280" y="90" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="30" font-weight="900" fill="#d91023" letter-spacing="4">MI PLATA</text>
+  <!-- Question mark -->
+  <text x="420" y="82" font-family="'Segoe UI', Arial, sans-serif" font-size="50" font-weight="900" fill="#d91023" opacity="0.3">?</text>
+  <!-- Animated budget bar chart -->
+  <g transform="translate(530, 0)">
+    <!-- Axes -->
+    <line x1="30" y1="120" x2="210" y2="120" stroke="#333" stroke-width="1"/>
+    <!-- Bar pairs: allocated (white) vs spent (red) -->
+    <!-- Bar 1 -->
+    <rect x="42" width="16" class="bar-allocated b1a"/>
+    <rect x="60" width="16" class="bar-spent b1s"/>
+    <!-- Bar 2 -->
+    <rect x="88" width="16" class="bar-allocated b2a"/>
+    <rect x="106" width="16" class="bar-spent b2s"/>
+    <!-- Bar 3 -->
+    <rect x="134" width="16" class="bar-allocated b3a"/>
+    <rect x="152" width="16" class="bar-spent b3s"/>
+    <!-- Bar 4 -->
+    <rect x="180" width="16" class="bar-allocated b4a"/>
+    <rect x="198" width="16" class="bar-spent b4s"/>
+    <!-- Gap highlight -->
+    <rect x="38" y="55" width="180" height="5" rx="2" fill="#d91023" class="gap-highlight" opacity="0"/>
+    <!-- Legend -->
+    <rect x="50" y="130" width="8" height="8" fill="#ffffff" opacity="0.8"/>
+    <text x="62" y="138" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#8b949e">Allocated</text>
+    <rect x="110" y="130" width="8" height="8" fill="#d91023"/>
+    <text x="122" y="138" font-family="'Segoe UI', Arial, sans-serif" font-size="9" fill="#8b949e">Spent</text>
+  </g>
+  <!-- Tagline -->
+  <text x="280" y="120" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="13" fill="#8b949e">Government budget transparency for Peru</text>
+  <!-- Peru stripe accent -->
+  <rect x="0" y="175" width="800" height="5" fill="#d91023" opacity="0.4"/>
+</svg>

@@ -1,209 +1,84 @@
-<div align="center">
+# Donde Esta Mi Plata
 
-<img src="./assets/header.svg" alt="Donde Esta Mi Plata" width="100%"/>
+Prototype for testing a Lima municipal budget reporting idea.
 
-<img src="./assets/budget-reality.svg" alt="Budget vs Reality" width="100%"/>
+This is not production civic infrastructure. It is a Vite/React demo that lets a user upload an infrastructure photo, asks Gemini to classify it, shows budget context for a district, and generates a draft email-style complaint. Treat the output as a starting point to verify, not as proof.
 
-[![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Gemini AI](https://img.shields.io/badge/Gemini_AI-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
-[![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+## What Works
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+- Upload a photo and preview it in the browser.
+- Send the image data to Gemini 2.5 Flash for classification, severity, and a rough repair-cost estimate.
+- Show Lima district budget context from Supabase when configured, with static fallback data in the repo.
+- Show simulated citizen reports on the map.
+- Generate a draft municipality message and open it in the user's email client with a `mailto:` link.
+- Switch between Spanish, English, and Quechua UI strings.
 
-**[Report Bug](https://github.com/JDRV-space/donde-esta-mi-plata/issues/new?template=bug_report.md)** · **[Request Feature](https://github.com/JDRV-space/donde-esta-mi-plata/issues/new?template=feature_request.md)**
+## Hard Limits
 
-</div>
+- Uploaded image data is sent to Google Gemini. It leaves the browser.
+- This Vite app embeds configured environment variables into the client bundle. If you put a Gemini API key in client-side config, assume it is exposed to anyone using the built app.
+- Report persistence is a placeholder. `uploadReportToSupabase` currently returns success without saving a report.
+- The municipality email addresses are generated placeholders like `municipalidad_lima@gob.pe`. Verify real addresses yourself.
+- Budget data can come from Supabase or static fallback data. It may be mock, incomplete, stale, or wrong unless you verify it against an official source.
+- Gemini classifications and repair-cost estimates can be wrong.
+- This is not legal advice.
+- This is not an official complaint channel.
 
-## Overview
+## Local Setup
 
-**Donde Esta Mi Plata?** turns your phone into a budget-aware civic reporting tool. Point your camera at a pothole, broken streetlight, or overflowing trash and **Gemini AI** instantly analyzes the photo, categorizes the problem across 7 infrastructure types, estimates repair costs in Soles, and scores severity 1-5.
+Requirements:
 
-The AI cross-references your complaint against **actual budget execution data** for your district, showing exactly how much was allocated vs. spent. This gives you the evidence to hold your municipality accountable under Transparency Law 27806.
-
-Budget data sourced from Peru's **Ministry of Economy and Finance (MEF)**. Structured JSON output. Multimodal AI that turns citizen photos into actionable government intelligence.
-
-**Built for Lima's 43 districts. Starting with Lima, your city next.**
-
-## Features
-
-| Feature | Description |
-|---------|-------------|
-| **AI Photo Analysis** | Gemini 2.5 Flash analyzes infrastructure photos, categorizes issues, estimates repair costs in Soles |
-| **7 Infrastructure Categories** | Road damage, lighting, trash, water, parks, buildings, other |
-| **Severity Scoring** | 1-5 severity scale with AI-generated justification |
-| **Budget Cross-Reference** | Matches complaints against real municipal budget execution data |
-| **Interactive Map** | District-level budget visualization across all 43 Lima districts |
-| **Economic Indicators** | Real-time exchange rate and inflation data from BCRP (Peru Central Bank) |
-| **Multi-Language** | Spanish, English, and Quechua support for 700K+ indigenous citizens in Lima |
-| **Zero Backend** | 100% client-side processing, your photos never leave your browser |
-
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| **Framework** | [React 19](https://react.dev/) |
-| **Language** | [TypeScript 5](https://www.typescriptlang.org/) |
-| **Build Tool** | [Vite 5](https://vitejs.dev/) |
-| **AI Engine** | [Google Gemini 2.5 Flash](https://ai.google.dev/) via `@google/genai` |
-| **Database** | [Supabase](https://supabase.com/) (PostgreSQL) |
-| **Maps** | [React Leaflet](https://react-leaflet.js.org/) + [Leaflet](https://leafletjs.com/) |
-| **Styling** | [Tailwind CSS 3](https://tailwindcss.com/) |
-| **Screenshots** | [html2canvas](https://html2canvas.hertzen.com/) |
-| **Data Source** | [MEF Peru](https://www.mef.gob.pe/) (Ministry of Economy and Finance) |
-| **Typography** | [Merriweather](https://fonts.google.com/specimen/Merriweather) + [Courier Prime](https://fonts.google.com/specimen/Courier+Prime) |
-
-
-## Quick Start
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v18+)
-- [Google Gemini API Key](https://aistudio.google.com/apikey)
-- [Supabase Project](https://supabase.com/) (for budget data)
-
-### Installation
+- Node.js 18+
+- A Gemini API key if you want photo analysis to call Gemini
+- Supabase URL and anon key if you want live budget rows from a `budget_lima` table
 
 ```bash
-# Clone the repository
-git clone https://github.com/JDRV-space/donde-esta-mi-plata.git
-cd donde-esta-mi-plata
-
-# Install dependencies
 npm install
-
-# Configure environment variables
 cp .env.example .env.local
-# Edit .env.local with your API keys
-
-# Start the development server
 npm run dev
 ```
 
-The app will be available at `http://localhost:3000`.
+The dev server runs at `http://localhost:3000`.
 
-### Production Build
+Build locally with:
 
 ```bash
 npm run build
 ```
 
-Output will be in the `dist/` directory.
+## Environment
 
+Copy `.env.example` to `.env.local` and set:
 
-## Environment Variables
+| Variable | What it is used for |
+| --- | --- |
+| `GEMINI_API_KEY` | Sent from the client bundle to Gemini for image analysis |
+| `SUPABASE_URL` | Supabase project URL for budget lookup |
+| `SUPABASE_ANON_KEY` | Supabase anon key for budget lookup |
 
-Copy `.env.example` to `.env.local` and fill in your values:
+Do not use a private server-side Gemini key directly in this client app if the build will be shared. Put Gemini behind a backend proxy before treating this as more than a local demo.
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `GEMINI_API_KEY` | Google Gemini API key | Yes |
-| `SUPABASE_URL` | Supabase project URL | Yes |
-| `SUPABASE_ANON_KEY` | Supabase anonymous key | Yes |
+## Data Flow
 
+1. The browser reads the uploaded image with `FileReader`.
+2. The app sends base64 image data to Gemini from `services/geminiService.ts`.
+3. Gemini returns a JSON classification, severity, description, and estimated repair cost.
+4. The app matches the result to local district budget categories.
+5. Supabase budget data is used when available; otherwise the app falls back to static data in `constants.ts`.
+6. The app generates a draft message and a placeholder municipality email address.
+7. Sending uses `mailto:`. The app does not submit an official complaint.
 
-## Project Structure
+## Project Map
 
-```
-donde-esta-mi-plata/
-├── components/
-│   ├── ReportFlow.tsx             # Report submission workflow with Gemini AI
-│   ├── ReportView.tsx             # Main report interface
-│   ├── ReportDetailView.tsx       # Report detail modal
-│   ├── AllReportsView.tsx         # Reports database view
-│   ├── MapView.tsx                # Interactive district map
-│   ├── DistrictSummaryCard.tsx    # District budget card
-│   └── Onboarding.tsx            # 3-step onboarding flow
-├── services/
-│   ├── geminiService.ts           # Google Gemini AI integration
-│   ├── supabase.ts                # Supabase database client
-│   └── bcrpService.ts            # Peru Central Bank API client
-├── utils/
-│   └── dataProcessing.ts          # District aggregation utilities
-├── App.tsx                        # Main application component
-├── index.tsx                      # React entry point
-├── index.html                     # HTML template
-├── LanguageContext.tsx             # i18n context (es/en/qu)
-├── types.ts                       # TypeScript type definitions
-├── constants.ts                   # Budget data and mock reports
-├── translations.ts                # Multi-language strings
-├── vite.config.ts                 # Vite configuration
-├── tsconfig.json                  # TypeScript configuration
-├── package.json                   # Dependencies
-└── LICENSE                        # MIT License
-```
-
-
-## How It Works
-
-```
-1. Citizen photographs infrastructure problem
-           |
-2. Gemini AI analyzes photo (client-side)
-           |
-3. AI categorizes: type, severity (1-5), estimated cost (S/.)
-           |
-4. System cross-references district budget execution data (MEF)
-           |
-5. Citizen generates formal complaint with budget evidence
-           |
-6. Send to municipality via email with tracking code
-```
-
-
-## Legal Framework
-
-- **Ley 27806:** Ley de Transparencia y Acceso a la Informacion Publica
-- **Ley 27444:** Ley del Procedimiento Administrativo General
-- **Ley 27785:** Ley Organica del Sistema Nacional de Control y de la Contraloria General de la Republica
-
-
-## Security
-
-- **Client-Side Processing:** Photos analyzed locally via Gemini API, never stored on a server
-- **Environment Variables:** All API keys stored in `.env.local`, never committed to git
-- **XSS Prevention:** React's built-in output escaping
-- **Parameterized Queries:** Supabase SDK prevents SQL injection
-- **No PII Storage:** No personally identifiable information persisted
-
-
-## Contributing
-
-Contributions are welcome. Please read the [Contributing Guide](CONTRIBUTING.md) before submitting a PR.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m 'Add your feature'`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
-
+- `App.tsx`: top-level view switching and data loading.
+- `components/ReportFlow.tsx`: image analysis flow and draft complaint generation.
+- `components/MapView.tsx`: district map.
+- `services/geminiService.ts`: Gemini image request.
+- `services/supabase.ts`: budget lookup and stubbed report functions.
+- `utils/dataProcessing.ts`: budget aggregation.
+- `constants.ts`: static budget fallback data and simulated reports.
+- `translations.ts`: Spanish, English, and Quechua strings.
 
 ## License
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
-
-
-## Authors
-
-**Juan Diego Rodriguez** [@JDRV-space](https://github.com/JDRV-space)
-
-**mmhc** [@mmhc14](https://github.com/mmhc14)
-
-
-## Roadmap
-
-Planned features for future releases:
-
-- [ ] **Smart Routing:** Automatically route complaints to municipality if funds exist, or to Contraloria General if budget is depleted
-- [ ] **Auto-Escalation Pipeline:** Municipality -> Comptroller -> Press with 10-day deadlines per stage
-- [ ] **Supabase Report Persistence:** Store citizen reports in a writable backend table
-- [ ] **PostCSS + Tailwind Build:** Replace CDN Tailwind with a proper build step for production
-- [ ] **Deployed Live Demo:** Host the app at a public URL
-
-<div align="center">
-
-*Donde esta mi plata? Demand accountability, one photo at a time.*
-
-</div>
+MIT. See `LICENSE`.

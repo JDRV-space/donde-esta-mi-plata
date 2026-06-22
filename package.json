@@ -1,7 +1,7 @@
 {
   "name": "donde-esta-mi-plata",
   "version": "1.0.0",
-  "description": "AI-powered civic reporting for Lima, Peru. Gemini analyzes infrastructure photos and cross-references municipal budget data.",
+  "description": "Prototype demo for testing Gemini photo analysis against Lima municipal budget data.",
   "license": "MIT",
   "repository": {
     "type": "git",

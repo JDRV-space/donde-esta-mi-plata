@@ -141,8 +141,8 @@ export async function fetchProjects(district: string, category?: string): Promis
 
 /**
  * REPORT HANDLING
- * Note: Since we are using mock data for the hackathon/demo without a writable backend table for reports,
- * these functions act as placeholders for where real DB logic would reside.
+ * Report storage is not implemented in this client. These functions define
+ * the integration boundary for a future writable reports table.
  */
 
 export async function fetchCitizenReports(district?: string): Promise<CitizenReport[]> {

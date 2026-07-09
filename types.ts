@@ -24,15 +24,27 @@ export interface AggregatedDistrictData {
   }>;
 }
 
-export interface GeminiAnalysisResult {
-  is_relevant: boolean; // True if it's a civic/infra issue, False if it's a selfie/cat/etc
-  relevance_reason?: string; // Why it was rejected
-  problem_type: "road_damage" | "lighting" | "trash" | "water" | "parks" | "building" | "other" | "none";
-  severity: number; // 1-5
-  description: string;
-  estimated_repair_cost_soles: number;
-  safety_hazard: boolean;
-}
+export type RelevantProblemType = "road_damage" | "lighting" | "trash" | "water" | "parks" | "building" | "other";
+export type ProblemType = RelevantProblemType | "none";
+
+export type ImageAnalysisResult =
+  | {
+      is_relevant: true;
+      problem_type: RelevantProblemType;
+      severity: number; // 1-5
+      description: string;
+      estimated_repair_cost_soles: number;
+      safety_hazard: boolean;
+    }
+  | {
+      is_relevant: false;
+      relevance_reason?: string;
+      problem_type: "none";
+      severity: 0;
+      description: "";
+      estimated_repair_cost_soles: 0;
+      safety_hazard: false;
+    };
 
 export interface CitizenReport {
   id: string;
@@ -48,7 +60,7 @@ export interface CitizenReport {
   lng?: number;
   timestamp: Date;
   imageUrl: string;
-  analysis: GeminiAnalysisResult;
+  analysis: ImageAnalysisResult;
   location: { lat: number; lng: number };
 }
 

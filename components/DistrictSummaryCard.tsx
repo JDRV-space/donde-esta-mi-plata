@@ -166,7 +166,7 @@ export const DistrictSummaryCard: React.FC<DistrictSummaryCardProps> = ({ distri
                                          </div>
                                          <div className="w-full bg-gray-200 h-1 mb-1"></div>
                                          <p className="text-[10px] text-gray-600 line-clamp-2 italic font-mono leading-tight">
-                                             "{t('app.mock_desc_pattern')
+                                             "{t('app.sample_desc_pattern')
                                                 .replace('{problem}', t(`problem.${report.analysis.problem_type}`).toLowerCase())
                                                 .replace('{district}', report.district)}"
                                          </p>
@@ -176,7 +176,7 @@ export const DistrictSummaryCard: React.FC<DistrictSummaryCardProps> = ({ distri
                         </div>
                         
                         <div className="text-[10px] font-mono text-gray-500 italic mt-4 bg-gray-100 p-2 border border-gray-300">
-                            {t('card.mock_data')}
+                            {t('card.sample_data')}
                         </div>
                     </div>
                 ) : (

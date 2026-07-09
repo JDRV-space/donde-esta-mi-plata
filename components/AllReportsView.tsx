@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ReportDetailView } from './ReportDetailView';
-import { MOCK_REPORTS } from '../constants';
+import { SAMPLE_REPORTS } from '../constants';
 import { useTranslation } from '../LanguageContext';
 
 interface AllReportsViewProps {
@@ -9,7 +9,7 @@ interface AllReportsViewProps {
 }
 
 export const AllReportsView: React.FC<AllReportsViewProps> = ({ onBack, openedReportId }) => {
-  const [reports, setReports] = useState(MOCK_REPORTS);
+  const [reports, setReports] = useState(SAMPLE_REPORTS);
   const [selectedReport, setSelectedReport] = useState<any | null>(null);
   const { t } = useTranslation();
 
@@ -88,7 +88,7 @@ export const AllReportsView: React.FC<AllReportsViewProps> = ({ onBack, openedRe
                 </div>
                 <h4 className="text-sm font-bold text-black uppercase mb-1 group-hover:text-retro-orange transition-colors">{t(`problem.${report.analysis.problem_type}`)}</h4>
                 <p className="text-xs text-gray-600 truncate font-sans italic">
-                    "{t('app.mock_desc_pattern')
+                    "{t('app.sample_desc_pattern')
                         .replace('{problem}', t(`problem.${report.analysis.problem_type}`).toLowerCase())
                         .replace('{district}', report.district)}"
                 </p>

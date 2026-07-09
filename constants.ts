@@ -1,6 +1,6 @@
 import { BudgetRecord, CitizenReport } from "./types";
 
-// Raw data provided in the prompt context
+// Static Lima budget records used when Supabase is not configured.
 export const RAW_BUDGET_DATA: BudgetRecord[] = [
   { "district": "ATE", "year": 2025, "category": "EDUCACION", "pia": 3879.0, "pim": 3879.0, "devengado": 0.0, "avance_pct": 0.0, "latitude": -12.0263, "longitude": -76.9186 },
   { "district": "COMAS", "year": 2025, "category": "COMERCIO", "pia": 235000.0, "pim": 235000.0, "devengado": 0.0, "avance_pct": 0.0, "latitude": -11.9458, "longitude": -77.0586 },
@@ -75,9 +75,9 @@ const randomCoord = (center: number, spread: number = 0.01) => {
   return center + (Math.random() - 0.5) * spread;
 };
 
-// Procedurally generate reports for ALL districts
-const generateMockReports = (): CitizenReport[] => {
-  // Full list of Lima Districts
+// Procedurally generate sample reports for all districts.
+const generateSampleReports = (): CitizenReport[] => {
+  // Reference list of Lima districts.
   const DISTRICTS = [
     'ATE', 'BARRANCO', 'BRENA', 'CARABAYLLO', 'CHACLACAYO', 'CHORRILLOS', 'CIENEGUILLA', 'COMAS', 'EL AGUSTINO', 'INDEPENDENCIA', 
     'JESUS MARIA', 'LA MOLINA', 'LA VICTORIA', 'LIMA', 'LINCE', 'LOS OLIVOS', 'LURIGANCHO', 'LURIN', 'MAGDALENA DEL MAR', 
@@ -106,7 +106,7 @@ const generateMockReports = (): CitizenReport[] => {
     const lat = districtData?.latitude || -12.0464;
     const lng = districtData?.longitude || -77.0428;
 
-    // Generate 5-10 reports per district
+    // Generate 5-10 sample reports per district.
     const count = Math.floor(Math.random() * 6) + 5; 
 
     for (let i = 0; i < count; i++) {
@@ -122,7 +122,7 @@ const generateMockReports = (): CitizenReport[] => {
             hoursAgo: hoursAgo,
             status: isVerified ? 'verified' : 'pending',
             icon: problem.icon,
-            desc: `Reporte simulado de ${problem.type.toLowerCase()} en ${district}.`,
+            desc: `Reporte de muestra de ${problem.type.toLowerCase()} en ${district}.`,
             lat: randomCoord(lat),
             lng: randomCoord(lng),
             timestamp: new Date(),
@@ -144,4 +144,4 @@ const generateMockReports = (): CitizenReport[] => {
   return reports;
 };
 
-export const MOCK_REPORTS: CitizenReport[] = generateMockReports();
+export const SAMPLE_REPORTS: CitizenReport[] = generateSampleReports();

@@ -8,7 +8,7 @@ import { DistrictSummaryCard } from './components/DistrictSummaryCard';
 import { ReportDetailView } from './components/ReportDetailView';
 import { getAggregatedDistrictData, getAggregatedDistrictDataAsync } from './utils/dataProcessing';
 import { AggregatedDistrictData } from './types';
-import { MOCK_REPORTS } from './constants';
+import { SAMPLE_REPORTS } from './constants';
 import { useTranslation } from './LanguageContext';
 import { Language } from './translations';
 
@@ -111,7 +111,7 @@ const App: React.FC = () => {
   };
 
   // Find the opened report object
-  const openedReport = openedReportId ? MOCK_REPORTS.find(r => r.id === openedReportId.toString()) : null;
+  const openedReport = openedReportId ? SAMPLE_REPORTS.find(r => r.id === openedReportId.toString()) : null;
 
   return (
     <div className="flex flex-col h-full font-mono text-retro-dark bg-retro-paper">
@@ -124,7 +124,7 @@ const App: React.FC = () => {
             report={openedReport}
             onClose={() => setOpenedReportId(undefined)}
             onToggleStatus={(id) => {
-                // Mock toggle logic would go here or in a global store
+                // Status changes are local-only until report persistence is implemented.
             }}
         />
       )}
@@ -197,7 +197,7 @@ const App: React.FC = () => {
              <div className="flex-1 relative h-full">
                 <MapView 
                     districts={districts}
-                    reports={MOCK_REPORTS}
+                    reports={SAMPLE_REPORTS}
                     selectedDistrict={selectedDistrict}
                     onDistrictSelect={setSelectedDistrict}
                     onReportSelect={handleOpenReport}
@@ -207,7 +207,7 @@ const App: React.FC = () => {
                 {selectedDistrict && (
                     <DistrictSummaryCard 
                         district={selectedDistrict} 
-                        reports={MOCK_REPORTS}
+                        reports={SAMPLE_REPORTS}
                         onClose={() => setSelectedDistrict(null)}
                         onNext={handleNextDistrict}
                         onPrev={handlePrevDistrict}

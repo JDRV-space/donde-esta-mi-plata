@@ -1,6 +1,6 @@
 import React from 'react';
 import { AggregatedDistrictData } from '../types';
-import { MOCK_REPORTS } from '../constants';
+import { SAMPLE_REPORTS } from '../constants';
 import { formatCurrency } from '../utils/dataProcessing';
 import { useTranslation } from '../LanguageContext';
 
@@ -25,7 +25,7 @@ export const ReportView: React.FC<ReportViewProps> = ({ onCapture, currentDistri
 
   const { t } = useTranslation();
 
-  const recentReports = MOCK_REPORTS.slice(0, 3);
+  const recentReports = SAMPLE_REPORTS.slice(0, 3);
 
   // Stats Logic
   const executionPct = currentDistrict ? currentDistrict.execution_pct : 0;
@@ -180,7 +180,7 @@ export const ReportView: React.FC<ReportViewProps> = ({ onCapture, currentDistri
                         </div>
                         <div className="text-[10px] font-bold text-retro-orange uppercase mb-1">{report.district}</div>
                         <p className="text-xs text-gray-600 truncate font-sans italic">
-                            "{t('app.mock_desc_pattern')
+                            "{t('app.sample_desc_pattern')
                                 .replace('{problem}', t(`problem.${report.analysis.problem_type}`).toLowerCase())
                                 .replace('{district}', report.district)}"
                         </p>

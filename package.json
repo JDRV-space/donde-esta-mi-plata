@@ -1,0 +1,45 @@
+{
+  "name": "donde-esta-mi-plata",
+  "version": "1.0.0",
+  "description": "Client-side Lima budget reporting aid with photo analysis.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JDRV-space/donde-esta-mi-plata"
+  },
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit && deno check supabase/functions/analyze-image/index.ts",
+    "test": "vitest run && deno test supabase/functions/analyze-image",
+    "security:audit": "npm audit --audit-level=high && deno audit",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "engines": {
+    "node": "^22.0.0 || >=24.0.0",
+    "npm": ">=10.0.0"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "7.3.1",
+    "@fontsource/courier-prime": "5.3.0",
+    "@fontsource/merriweather": "5.3.0",
+    "@supabase/supabase-js": "2.110.1",
+    "html2canvas": "1.4.1",
+    "react": "19.2.1",
+    "react-dom": "19.2.1",
+    "react-leaflet": "5.0.0"
+  },
+  "devDependencies": {
+    "@types/leaflet": "1.9.21",
+    "@types/node": "26.1.1",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "4.7.0",
+    "autoprefixer": "10.5.4",
+    "postcss": "8.5.23",
+    "tailwindcss": "3.4.19",
+    "typescript": "5.9.3",
+    "vite": "6.4.3",
+    "vitest": "4.1.10"
+  }
+}

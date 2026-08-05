@@ -9,20 +9,20 @@
     "npm:@supabase/server@1.4.1": "1.4.1_@supabase+supabase-js@2.110.1",
     "npm:@supabase/supabase-js@2.110.1": "2.110.1",
     "npm:@types/leaflet@1.9.21": "1.9.21",
-    "npm:@types/node@26.1.1": "26.1.1",
+    "npm:@types/node@22.20.1": "22.20.1",
     "npm:@types/react-dom@19.2.3": "19.2.3_@types+react@19.2.17",
     "npm:@types/react@19.2.17": "19.2.17",
-    "npm:@vitejs/plugin-react@4.7.0": "4.7.0_vite@6.4.3__@types+node@26.1.1_@types+node@26.1.1",
+    "npm:@vitejs/plugin-react@4.7.0": "4.7.0_vite@6.4.3__@types+node@22.20.1_@types+node@22.20.1",
     "npm:autoprefixer@10.5.4": "10.5.4_postcss@8.5.23",
     "npm:html2canvas@1.4.1": "1.4.1",
+    "npm:leaflet@1.9.4": "1.9.4",
     "npm:postcss@8.5.23": "8.5.23",
     "npm:react-dom@19.2.1": "19.2.1_react@19.2.1",
-    "npm:react-leaflet@5.0.0": "5.0.0_leaflet@1.9.4_react@19.2.1_react-dom@19.2.1__react@19.2.1",
     "npm:react@19.2.1": "19.2.1",
     "npm:tailwindcss@3.4.19": "3.4.19",
     "npm:typescript@5.9.3": "5.9.3",
-    "npm:vite@6.4.3": "6.4.3_@types+node@26.1.1",
-    "npm:vitest@4.1.10": "4.1.10_@types+node@26.1.1_vite@6.4.3__@types+node@26.1.1"
+    "npm:vite@6.4.3": "6.4.3_@types+node@22.20.1",
+    "npm:vitest@4.1.10": "4.1.10_@types+node@22.20.1_vite@6.4.3__@types+node@22.20.1"
   },
   "jsr": {
     "@std/assert@1.0.14": {
@@ -359,14 +359,6 @@
         "fastq"
       ]
     },
-    "@react-leaflet/core@3.0.0_leaflet@1.9.4_react@19.2.1_react-dom@19.2.1__react@19.2.1": {
-      "integrity": "sha512-3EWmekh4Nz+pGcr+xjf0KNyYfC3U2JjnkWsh0zcqaexYqmmB5ZhH37kz41JXGmKzpaMZCnPofBBm64i+YrEvGQ==",
-      "dependencies": [
-        "leaflet",
-        "react",
-        "react-dom"
-      ]
-    },
     "@rolldown/pluginutils@1.0.0-beta.27": {
       "integrity": "sha512-+d0F4MKMCbeVUJwG96uQ4SgAznZNSq93I3V+9NHA4OpvqG8mRCpGdKmK8l/dl02h2CCDHwW2FqilnTyDcAnqjA=="
     },
@@ -601,8 +593,8 @@
         "@types/geojson"
       ]
     },
-    "@types/node@26.1.1": {
-      "integrity": "sha512-nxAkRSVkN1Y0JC1W8ky/fTfkGsMmcrRsbx+3XoZE+rMOX71kLYTV7fLXpqud1GpbpP5TuffXFqfX7fH2GgZREw==",
+    "@types/node@22.20.1": {
+      "integrity": "sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==",
       "dependencies": [
         "undici-types"
       ]
@@ -619,7 +611,7 @@
         "csstype"
       ]
     },
-    "@vitejs/plugin-react@4.7.0_vite@6.4.3__@types+node@26.1.1_@types+node@26.1.1": {
+    "@vitejs/plugin-react@4.7.0_vite@6.4.3__@types+node@22.20.1_@types+node@22.20.1": {
       "integrity": "sha512-gUu9hwfWvvEDBBmgtAowQCojwZmJ5mcLn3aufeCsitijs3+f2NsrPtlAWIR6OPiqljl96GVCUbLe0HyqIpVaoA==",
       "dependencies": [
         "@babel/core",
@@ -642,7 +634,7 @@
         "tinyrainbow"
       ]
     },
-    "@vitest/mocker@4.1.10_vite@6.4.3__@types+node@26.1.1_@types+node@26.1.1": {
+    "@vitest/mocker@4.1.10_vite@6.4.3__@types+node@22.20.1_@types+node@22.20.1": {
       "integrity": "sha512-v0xaezt+DKEmKfaxg133ldzADrwLGd7Ze1MfQQTYfvs8OqZIwbxyxaYURivwV7sWy5fqn3rH5uOrSp07bp44Ow==",
       "dependencies": [
         "@vitest/spy",
@@ -1111,15 +1103,6 @@
         "scheduler"
       ]
     },
-    "react-leaflet@5.0.0_leaflet@1.9.4_react@19.2.1_react-dom@19.2.1__react@19.2.1": {
-      "integrity": "sha512-CWbTpr5vcHw5bt9i4zSlPEVQdTVcML390TjeDG0cK59z1ylexpqC6M1PJFjV8jD7CF+ACBFsLIDs6DRMoLEofw==",
-      "dependencies": [
-        "@react-leaflet/core",
-        "leaflet",
-        "react",
-        "react-dom"
-      ]
-    },
     "react-refresh@0.17.0": {
       "integrity": "sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ=="
     },
@@ -1305,8 +1288,8 @@
       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
       "bin": true
     },
-    "undici-types@8.3.0": {
-      "integrity": "sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ=="
+    "undici-types@6.21.0": {
+      "integrity": "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="
     },
     "update-browserslist-db@1.2.3_browserslist@4.28.7": {
       "integrity": "sha512-Js0m9cx+qOgDxo0eMiFGEueWztz+d4+M3rGlmKPT+T4IS/jP4ylw3Nwpu6cpTTP8R1MAC1kF4VbdLt3ARf209w==",
@@ -1326,7 +1309,7 @@
         "base64-arraybuffer"
       ]
     },
-    "vite@6.4.3_@types+node@26.1.1": {
+    "vite@6.4.3_@types+node@22.20.1": {
       "integrity": "sha512-NTKlcQjlAK7MlQoyb6LgaqHc8sso/pVyUJYWMws3jg21uTJw/LddqIFPcPqP6PzpgbIcZyKI85sFE4HBrQDA8A==",
       "dependencies": [
         "@types/node",
@@ -1345,7 +1328,7 @@
       ],
       "bin": true
     },
-    "vitest@4.1.10_@types+node@26.1.1_vite@6.4.3__@types+node@26.1.1": {
+    "vitest@4.1.10_@types+node@22.20.1_vite@6.4.3__@types+node@22.20.1": {
       "integrity": "sha512-R9jUTe5S4Qb0HCd4TNqpC7oGcrMssMRGXLW80ubjWsW9VH5GF8y1Y0SFLY9AbqSk6nt0PnOx4H4WNJYZ13GUPw==",
       "dependencies": [
         "@types/node",
@@ -1399,15 +1382,15 @@
         "npm:@fortawesome/fontawesome-free@7.3.1",
         "npm:@supabase/supabase-js@2.110.1",
         "npm:@types/leaflet@1.9.21",
-        "npm:@types/node@26.1.1",
+        "npm:@types/node@22.20.1",
         "npm:@types/react-dom@19.2.3",
         "npm:@types/react@19.2.17",
         "npm:@vitejs/plugin-react@4.7.0",
         "npm:autoprefixer@10.5.4",
         "npm:html2canvas@1.4.1",
+        "npm:leaflet@1.9.4",
         "npm:postcss@8.5.23",
         "npm:react-dom@19.2.1",
-        "npm:react-leaflet@5.0.0",
         "npm:react@19.2.1",
         "npm:tailwindcss@3.4.19",
         "npm:typescript@5.9.3",

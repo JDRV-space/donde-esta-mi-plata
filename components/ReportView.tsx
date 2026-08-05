@@ -168,7 +168,7 @@ export const ReportView: React.FC<ReportViewProps> = ({ onCapture, currentDistri
 
       </div>
 
-      {/* Recent Activity */}
+      {/* Deterministic interface examples */}
       <div className="flex-1">
         <div className="flex justify-between items-end mb-4 border-b-4 border-black pb-2">
             <h3 className="font-serif font-black text-xl text-black uppercase">
@@ -186,13 +186,13 @@ export const ReportView: React.FC<ReportViewProps> = ({ onCapture, currentDistri
                     onClick={() => onViewAllReports(Number(report.id))}
                     className="bg-white p-3 border-2 border-black shadow-retro-sm flex items-start gap-3 cursor-pointer hover:bg-retro-paper transition-colors group"
                 >
-                    <div className={`w-12 h-12 border-2 border-black flex items-center justify-center shrink-0 font-bold text-lg ${report.status === 'verified' ? 'bg-retro-amber text-black' : 'bg-gray-200 text-gray-500'}`}>
+                    <div className="w-12 h-12 border-2 border-black flex items-center justify-center shrink-0 font-bold text-lg bg-retro-amber text-black">
                         <i className={`fa-solid ${report.icon}`}></i>
                     </div>
                     <div className="flex-1 min-w-0 font-mono">
                         <div className="flex justify-between mb-1 items-center">
                             <h4 className="text-sm font-bold text-black uppercase truncate group-hover:text-retro-orange transition-colors">{t(`problem.${report.analysis.problem_type}`)}</h4>
-                            <span className="text-[10px] text-white bg-black px-2 py-0.5">{t('time.hrs_ago').replace('{n}', report.hoursAgo.toString())}</span>
+                            <span className="text-[10px] text-white bg-black px-2 py-0.5">{t('db.sample_label')}</span>
                         </div>
                         <div className="text-[10px] font-bold text-retro-orange uppercase mb-1">{report.district}</div>
                         <p className="text-xs text-gray-600 truncate font-sans italic">

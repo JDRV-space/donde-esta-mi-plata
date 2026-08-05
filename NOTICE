@@ -3,3 +3,9 @@ Copyright 2026 JDRV-space and mmhc (mmhc14)
 
 This product includes software and documentation developed by JDRV-space and mmhc.
 Please retain this attribution in substantial redistributions or derived works.
+
+Third-party components and materials retain their own licenses and terms.
+Notable runtime materials include Leaflet (BSD-2-Clause), React (MIT), locally
+bundled Font Awesome Free icons and SIL Open Font License fonts, OpenStreetMap
+and CARTO map tiles, and the peru-geojson-datasets district boundaries. See the
+dependency lockfile and upstream distributions for complete applicable terms.

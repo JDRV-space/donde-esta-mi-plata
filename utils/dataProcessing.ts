@@ -54,10 +54,11 @@ export const DISTRICT_COORDS: Record<string, { lat: number; lng: number }> = {
   'SAN LUIS': { lat: -12.0833, lng: -77.0 },
 };
 
-// VERIFIED 2025 MUNICIPAL DATA
-// Filter logic: Project contains "DISTRITO DE [Name]" + Max S/50M per project + RESIDUOS SOLIDOS
-// This excludes national/regional projects that were inflating the budget.
-const VERIFIED_2025_DATA: AggregatedDistrictData[] = [
+// Unverified 2025 static snapshot inherited from the initial repository import.
+// Its primary-source URL, extraction date, and transformation evidence are not
+// available in this repository. Do not treat these values as official or use
+// them in a complaint until that provenance is supplied and reviewed.
+const UNVERIFIED_2025_BUDGET_SNAPSHOT: AggregatedDistrictData[] = [
   { district: "LIMA", latitude: -12.0464, longitude: -77.0428, total_pim: 267343149, total_devengado: 196661479, execution_pct: 73.6, categories: {"CULTURA Y DEPORTE":{pim:198142284,devengado:153700404,pct:77.6},"TRANSPORTE":{pim:30341080,devengado:27445133,pct:90.5},"RELACIONES EXTERIORES":{pim:19807161,devengado:6108926,pct:30.8}} },
   { district: "SAN JUAN DE LURIGANCHO", latitude: -11.9833, longitude: -77.0, total_pim: 181454772, total_devengado: 167865494, execution_pct: 92.5, categories: {"EDUCACION":{pim:140022685,devengado:135284961,pct:96.6},"SALUD":{pim:35359818,devengado:29435051,pct:83.2},"TRANSPORTE":{pim:2624965,devengado:300387,pct:11.4}} },
   { district: "VENTANILLA", latitude: -11.8833, longitude: -77.1333, total_pim: 137910435, total_devengado: 85608773, execution_pct: 62.1, categories: {"TRANSPORTE":{pim:63903408,devengado:33863433,pct:53.0},"EDUCACION":{pim:40592459,devengado:27675460,pct:68.2},"AMBIENTE":{pim:23213730,devengado:19933016,pct:85.9}} },
@@ -81,7 +82,7 @@ const VERIFIED_2025_DATA: AggregatedDistrictData[] = [
   { district: "BELLAVISTA", latitude: -12.0667, longitude: -77.1167, total_pim: 30157678, total_devengado: 30157678, execution_pct: 99.9, categories: {"AMBIENTE":{pim:15353234,devengado:11419770,pct:74.4},"EDUCACION":{pim:9216290,devengado:6063180,pct:65.8},"ORDEN PUBLICO Y SEGURIDAD":{pim:2442328,devengado:3700,pct:0.2}} },
   { district: "LURIGANCHO", latitude: -11.9833, longitude: -76.9167, total_pim: 30151851, total_devengado: 30151851, execution_pct: 99.9, categories: {"AMBIENTE":{pim:17811094,devengado:16784940,pct:94.2},"TRANSPORTE":{pim:8303668,devengado:8218406,pct:99.0},"VIVIENDA Y DESARROLLO URBANO":{pim:1636153,devengado:1636153,pct:99.9}} },
   { district: "SANTA ANITA", latitude: -12.05, longitude: -76.9667, total_pim: 29225176, total_devengado: 23782962, execution_pct: 81.4, categories: {"AMBIENTE":{pim:21486250,devengado:18232306,pct:84.9},"TRANSPORTE":{pim:7325316,devengado:5500197,pct:75.1},"VIVIENDA Y DESARROLLO URBANO":{pim:405234,devengado:42083,pct:10.4}} },
-  { district: "SAN JUAN DE MIRAFLORES", latitude: -12.15, longitude: -76.9667, total_pim: 28499266, total_devengado: 26144327, execution_pct: 91.7, categories: {"AMBIENTE":{pim:28197085,devengado:25478303,pct:90.4},"EDUCACION":{pim:302181,devengado:269025,pct:89.0},"SALUD":{pim:0,devengado:397000,pct:0}} },
+  { district: "SAN JUAN DE MIRAFLORES", latitude: -12.15, longitude: -76.9667, total_pim: 28499266, total_devengado: 26144327, execution_pct: 91.7, categories: {"AMBIENTE":{pim:28197085,devengado:25478303,pct:90.4},"EDUCACION":{pim:302181,devengado:269025,pct:89.0}} },
   { district: "ANCON", latitude: -11.7667, longitude: -77.15, total_pim: 25844525, total_devengado: 18938508, execution_pct: 73.3, categories: {"AMBIENTE":{pim:14447621,devengado:10777117,pct:74.6},"SANEAMIENTO":{pim:5690344,devengado:4694207,pct:82.5},"VIVIENDA Y DESARROLLO URBANO":{pim:2627577,devengado:2212158,pct:84.2}} },
   { district: "CIENEGUILLA", latitude: -12.1, longitude: -76.8, total_pim: 25799083, total_devengado: 16099662, execution_pct: 62.4, categories: {"TRANSPORTE":{pim:9928140,devengado:1834586,pct:18.5},"CULTURA Y DEPORTE":{pim:7551939,devengado:7128643,pct:94.4},"AMBIENTE":{pim:5833420,devengado:4800889,pct:82.3}} },
   { district: "PACHACAMAC", latitude: -12.2167, longitude: -76.8667, total_pim: 25281866, total_devengado: 19085212, execution_pct: 75.5, categories: {"AMBIENTE":{pim:11706188,devengado:9882006,pct:84.4},"CULTURA Y DEPORTE":{pim:8917556,devengado:8793656,pct:98.6},"TRANSPORTE":{pim:4418122,devengado:313550,pct:7.1}} },
@@ -110,13 +111,8 @@ const VERIFIED_2025_DATA: AggregatedDistrictData[] = [
   { district: "BREÑA", latitude: -12.0667, longitude: -77.05, total_pim: 85384, total_devengado: 60354, execution_pct: 70.7, categories: {"PLANEAMIENTO, GESTION Y RESERVA DE CONTINGENCIA":{pim:60000,devengado:60000,pct:100},"EDUCACION":{pim:25384,devengado:354,pct:1.4}} },
 ];
 
-export async function getAggregatedDistrictDataAsync(): Promise<AggregatedDistrictData[]> {
-  return VERIFIED_2025_DATA;
-}
-
-// Sync fallback
 export const getAggregatedDistrictData = (): AggregatedDistrictData[] => {
-  return VERIFIED_2025_DATA;
+  return UNVERIFIED_2025_BUDGET_SNAPSHOT;
 };
 
 export const formatCurrency = (amount: number): string => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MapView } from './components/MapView';
 import { ReportView } from './components/ReportView';
 import { ReportFlow } from './components/ReportFlow';
@@ -6,7 +6,7 @@ import { Onboarding } from './components/Onboarding';
 import { AllReportsView } from './components/AllReportsView';
 import { DistrictSummaryCard } from './components/DistrictSummaryCard';
 import { ReportDetailView } from './components/ReportDetailView';
-import { getAggregatedDistrictData, getAggregatedDistrictDataAsync } from './utils/dataProcessing';
+import { getAggregatedDistrictData } from './utils/dataProcessing';
 import { AggregatedDistrictData } from './types';
 import { SAMPLE_REPORTS } from './constants';
 import { useTranslation } from './LanguageContext';
@@ -17,71 +17,11 @@ const App: React.FC = () => {
   const [reportFile, setReportFile] = useState<File | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [selectedDistrict, setSelectedDistrict] = useState<AggregatedDistrictData | null>(null);
-  const [currentDistrict, setCurrentDistrict] = useState<AggregatedDistrictData | null>(null);
-  const [mapCenter, setMapCenter] = useState<{lat: number, lng: number} | undefined>(undefined);
   const [openedReportId, setOpenedReportId] = useState<number | undefined>(undefined);
-  
-  const [districts, setDistricts] = useState<AggregatedDistrictData[]>(() => getAggregatedDistrictData());
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [dataSource, setDataSource] = useState<'loading' | 'supabase' | 'fallback'>('loading');
+
+  const [districts] = useState<AggregatedDistrictData[]>(() => getAggregatedDistrictData());
 
   const { t, language, setLanguage } = useTranslation();
-
-  // Load data
-  useEffect(() => {
-    let cancelled = false;
-    async function loadFromSupabase() {
-      try {
-        const data = await getAggregatedDistrictDataAsync();
-        if (!cancelled && data.length > 0) {
-          setDistricts(data);
-          setDataSource('supabase');
-        }
-      } catch (err) {
-        if (!cancelled) setDataSource('fallback');
-      }
-    }
-    loadFromSupabase();
-    return () => { cancelled = true; };
-  }, []);
-
-  // Geolocation for initial center
-  useEffect(() => {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const userLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                let closest = districts[0];
-                let minDist = Infinity;
-                districts.forEach(d => {
-                    const dist = Math.sqrt(Math.pow(d.latitude - userLoc.lat, 2) + Math.pow(d.longitude - userLoc.lng, 2));
-                    if (dist < minDist) {
-                        minDist = dist;
-                        closest = d;
-                    }
-                });
-                
-                if (minDist < 0.1) {
-                    setMapCenter({ lat: closest.latitude, lng: closest.longitude });
-                    setCurrentDistrict(closest);
-                } else {
-                    const miraflores = districts.find(d => d.district === 'MIRAFLORES');
-                    if (miraflores) {
-                        setMapCenter({ lat: miraflores.latitude, lng: miraflores.longitude });
-                        setCurrentDistrict(miraflores);
-                    }
-                }
-            },
-            () => {
-                const miraflores = districts.find(d => d.district === 'MIRAFLORES');
-                if (miraflores) {
-                    setMapCenter({ lat: miraflores.latitude, lng: miraflores.longitude });
-                    setCurrentDistrict(miraflores);
-                }
-            }
-        );
-    }
-  }, [districts]);
 
   const handleOpenReport = (reportId?: number) => {
     setOpenedReportId(reportId);
@@ -123,9 +63,6 @@ const App: React.FC = () => {
         <ReportDetailView 
             report={openedReport}
             onClose={() => setOpenedReportId(undefined)}
-            onToggleStatus={(id) => {
-                // Status changes are local-only until report persistence is implemented.
-            }}
         />
       )}
 
@@ -150,9 +87,6 @@ const App: React.FC = () => {
                             {lang}
                         </button>
                     ))}
-                </div>
-                <div className="bg-retro-amber text-black text-xs font-bold px-2 py-1 uppercase border-2 border-retro-paper shadow-[2px_2px_0_0_#fff]">
-                    V.2.0
                 </div>
             </div>
         </div>
@@ -188,7 +122,7 @@ const App: React.FC = () => {
         {currentView === 'report' && (
             <ReportView 
                 onCapture={setReportFile}
-                currentDistrict={currentDistrict}
+                currentDistrict={selectedDistrict}
                 onViewAllReports={() => setCurrentView('all_reports')}
             />
         )}
@@ -197,11 +131,8 @@ const App: React.FC = () => {
              <div className="flex-1 relative h-full">
                 <MapView 
                     districts={districts}
-                    reports={SAMPLE_REPORTS}
                     selectedDistrict={selectedDistrict}
                     onDistrictSelect={setSelectedDistrict}
-                    onReportSelect={handleOpenReport}
-                    initialCenter={mapCenter}
                 />
                 
                 {selectedDistrict && (

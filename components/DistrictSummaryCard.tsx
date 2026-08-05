@@ -14,7 +14,7 @@ interface DistrictSummaryCardProps {
 }
 
 export const DistrictSummaryCard: React.FC<DistrictSummaryCardProps> = ({ district, reports = [], onClose, onNext, onPrev, onReportSelect }) => {
-  const [bcrpData, setBcrpData] = useState<BcrpIndicator[]>([]);
+  const [bcrpData, setBcrpData] = useState<BcrpIndicator[] | null>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -32,11 +32,9 @@ export const DistrictSummaryCard: React.FC<DistrictSummaryCardProps> = ({ distri
     })
     .sort((a, b) => b.pct - a.pct); // Sort high to low
 
-  // Filter and sort reports for this district (most recent first)
   const districtReports = reports
     .filter(r => r.district === district.district)
-    .sort((a, b) => (a.hoursAgo || 0) - (b.hoursAgo || 0))
-    .slice(0, 4); // Take top 4
+    .slice(0, 4);
 
   return (
     <div className="absolute bottom-0 left-0 right-0 h-[60vh] md:h-[50vh] bg-retro-paper border-t-4 border-black shadow-[0_-5px_0px_rgba(0,0,0,1)] z-[5000] flex flex-col animate-[slideUp_0.3s_ease-out]">
@@ -56,14 +54,13 @@ export const DistrictSummaryCard: React.FC<DistrictSummaryCardProps> = ({ distri
       <div className="bg-gray-100 border-b border-black py-1 px-4 overflow-hidden whitespace-nowrap">
          <div className="inline-flex gap-6 animate-marquee text-[10px] font-mono font-bold uppercase text-gray-600">
             <span><i className="fa-solid fa-chart-line mr-1"></i> {t('card.bcrp_label')}</span>
-            {bcrpData.length > 0 ? bcrpData.map((ind, i) => (
+            {bcrpData === null ? <span>{t('card.loading_bcrp')}</span> : bcrpData.length > 0 ? bcrpData.map((ind, i) => (
                 <span key={i} className="text-black">
                     {ind.name}: <span className="text-retro-orange">{ind.value}</span> ({ind.period})
                 </span>
-            )) : <span>{t('card.loading_bcrp')}</span>}
-            {/* Repeat for smooth marquee if needed */}
-            <span className="text-gray-400">|</span>
-            <span>{t('card.source')}</span>
+            )) : <span>{t('card.bcrp_unavailable')}</span>}
+            {bcrpData && bcrpData.length > 0 && <span className="text-gray-400">|</span>}
+            {bcrpData && bcrpData.length > 0 && <span>{t('card.source')}</span>}
          </div>
       </div>
 
@@ -156,13 +153,13 @@ export const DistrictSummaryCard: React.FC<DistrictSummaryCardProps> = ({ distri
                                      onClick={() => onReportSelect?.(Number(report.id))}
                                      className="bg-white border-2 border-black p-2 shadow-retro-sm flex items-start gap-3 cursor-pointer hover:bg-retro-paper transition-colors group"
                                  >
-                                     <div className={`w-10 h-10 flex items-center justify-center shrink-0 border border-black group-hover:scale-105 transition-transform ${report.status === 'verified' ? 'bg-retro-amber text-black' : 'bg-gray-100 text-gray-400'}`}>
+                                     <div className="w-10 h-10 flex items-center justify-center shrink-0 border border-black group-hover:scale-105 transition-transform bg-retro-amber text-black">
                                          <i className={`fa-solid ${report.icon} text-lg`}></i>
                                      </div>
                                      <div className="flex-1 min-w-0">
                                          <div className="flex justify-between items-start mb-1">
                                             <p className="text-xs font-bold uppercase truncate text-black group-hover:text-retro-orange transition-colors">{t(`problem.${report.analysis.problem_type}`)}</p>
-                                            <span className="text-[9px] font-mono text-white bg-black px-1 ml-2 shrink-0">{t('time.hrs_ago').replace('{n}', report.hoursAgo.toString())}</span>
+                                            <span className="text-[9px] font-mono text-white bg-black px-1 ml-2 shrink-0">{t('db.sample_label')}</span>
                                          </div>
                                          <div className="w-full bg-gray-200 h-1 mb-1"></div>
                                          <p className="text-[10px] text-gray-600 line-clamp-2 italic font-mono leading-tight">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ReportDetailView } from './ReportDetailView';
 import { SAMPLE_REPORTS } from '../constants';
 import { useTranslation } from '../LanguageContext';
+import { CitizenReport } from '../types';
 
 interface AllReportsViewProps {
   onBack: () => void;
@@ -9,8 +10,8 @@ interface AllReportsViewProps {
 }
 
 export const AllReportsView: React.FC<AllReportsViewProps> = ({ onBack, openedReportId }) => {
-  const [reports, setReports] = useState(SAMPLE_REPORTS);
-  const [selectedReport, setSelectedReport] = useState<any | null>(null);
+  const reports = SAMPLE_REPORTS;
+  const [selectedReport, setSelectedReport] = useState<CitizenReport | null>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -20,19 +21,8 @@ export const AllReportsView: React.FC<AllReportsViewProps> = ({ onBack, openedRe
     }
   }, [openedReportId, reports]);
 
-  const toggleStatus = (id: number) => {
-    setReports(reports.map(r => 
-      r.id === id.toString() 
-        ? { ...r, status: r.status === 'pending' ? 'verified' : 'pending' }
-        : r
-    ));
-    if (selectedReport && selectedReport.id === id.toString()) {
-        setSelectedReport((prev: any) => ({ ...prev, status: prev.status === 'pending' ? 'verified' : 'pending' }));
-    }
-  };
-
   const totalReports = reports.length;
-  const answeredReports = reports.filter(r => r.status === 'verified').length;
+  const districtCount = new Set(reports.map((report) => report.district)).size;
 
   return (
     <div className="flex flex-col h-full bg-retro-paper p-4 overflow-y-auto font-mono">
@@ -41,7 +31,6 @@ export const AllReportsView: React.FC<AllReportsViewProps> = ({ onBack, openedRe
         <ReportDetailView 
             report={selectedReport} 
             onClose={() => setSelectedReport(null)}
-            onToggleStatus={toggleStatus}
         />
       )}
 
@@ -67,7 +56,7 @@ export const AllReportsView: React.FC<AllReportsViewProps> = ({ onBack, openedRe
         </div>
         <div className="bg-white p-4 border-2 border-black shadow-retro">
             <p className="text-xs text-retro-orange font-bold uppercase mb-1">{t('db.attended')}</p>
-            <p className="text-3xl font-serif text-black">{answeredReports}</p>
+            <p className="text-3xl font-serif text-black">{districtCount}</p>
         </div>
       </div>
 
@@ -79,12 +68,12 @@ export const AllReportsView: React.FC<AllReportsViewProps> = ({ onBack, openedRe
             onClick={() => setSelectedReport(report)}
             className="bg-white p-3 border-2 border-black shadow-retro-sm flex items-center gap-4 cursor-pointer hover:bg-yellow-50 transition-colors group"
           >
-            <div className={`w-4 h-12 border border-black ${report.status === 'verified' ? 'bg-retro-amber' : 'bg-gray-300'}`}></div>
+            <div className="w-4 h-12 border border-black bg-retro-amber"></div>
             
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between text-[10px] font-bold uppercase mb-1">
                     <span className="text-retro-orange bg-retro-paper px-1 border border-gray-200">{report.district}</span>
-                    <span className="text-gray-500">{t('time.hrs_ago').replace('{n}', report.hoursAgo.toString())}</span>
+                    <span className="text-gray-500">{t('db.sample_label')}</span>
                 </div>
                 <h4 className="text-sm font-bold text-black uppercase mb-1 group-hover:text-retro-orange transition-colors">{t(`problem.${report.analysis.problem_type}`)}</h4>
                 <p className="text-xs text-gray-600 truncate font-sans italic">

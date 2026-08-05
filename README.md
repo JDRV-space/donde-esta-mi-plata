@@ -1,59 +1,67 @@
 # Donde Esta Mi Plata
 
-Civic reporting aid for exploring Lima municipal budget context and preparing
-an editable complaint draft.
+Prototype civic reporting aid for Lima. It analyzes a user-selected photo,
+shows an explicitly unverified static 2025 budget snapshot, and prepares an
+editable email draft.
 
-The app lets a user upload a photo, analyzes it through an authenticated
-Supabase Edge Function, shows static 2025 budget context for a district, and
-opens a draft complaint in the user's email client. Treat every classification,
-cost estimate, municipality address, and budget figure as unverified input.
+## Project Status
 
-## Security Architecture
+- Prototype, not a government service or official complaint channel.
+- No tagged releases or production support commitment currently exist.
+- The app does not submit or persist reports and does not create official
+  tracking records.
+- Sample reports are deterministic interface examples, not citizen activity,
+  municipal responses, or evidence of repairs.
+- This repository provides general civic information, not legal advice.
 
-The browser never receives or calls Gemini with `GEMINI_API_KEY`.
+Only the latest code on `main` is considered for fixes. Review
+[SECURITY.md](SECURITY.md), [PRIVACY.md](PRIVACY.md), and
+[CONTRIBUTING.md](CONTRIBUTING.md) before operating or contributing.
 
-1. The browser validates a JPEG, PNG, or WebP image up to 5 MiB.
-2. Supabase Anonymous Auth creates or reuses a persisted authenticated session.
-3. The browser invokes the JWT-protected `analyze-image` Edge Function with
-   multipart form data.
-4. The function repeats size, MIME, and file-signature validation.
-5. A Postgres function atomically enforces 10 analyses per authenticated user
-   per one-hour window.
-6. The Edge Function calls Gemini with server-side secrets and validates the
-   structured output before returning it.
+## What the App Does
 
-The Edge Function returns explicit errors for invalid requests, authentication,
-user rate limits, provider quota limits, provider failures, and invalid provider
-responses. It fails closed if the quota database function is unavailable.
+1. The user selects a JPEG, PNG, or WebP image up to 5 MiB.
+2. A Supabase anonymous session invokes the authenticated `analyze-image` Edge
+   Function.
+3. The function validates the image, applies a per-user rate limit, calls
+   Google Gemini with server-side credentials, and validates the response.
+4. The user reviews the AI output, manually confirms a district, optionally
+   shares precise location, and writes their own description.
+5. The app opens an email draft without a recipient. The user must find an
+   official address, edit the draft, attach the photo, and send it themselves.
 
-## Hard Limits
+AI classifications, severity labels, descriptions, and repair-cost estimates
+can be wrong. The local reference code is not an official case number.
 
-- The image leaves the browser and is processed by Supabase and Google Gemini.
-- Anonymous users can create a new identity after clearing browser storage.
-  Supabase recommends CAPTCHA or Cloudflare Turnstile for anonymous sign-in
-  abuse prevention. Enabling one is a required production control.
-- The repository rate limit is per authenticated Supabase user. It is a cost
-  guardrail, not a replacement for CAPTCHA, provider quotas, billing alerts, or
-  edge/WAF controls.
-- Reports are not persisted or submitted to a municipality.
-- `mailto:` only opens the user's email client.
-- Municipality email addresses are generated fallbacks and may not exist.
-- Budget context is static repository data and may be incomplete or stale.
-- The map still depends on CARTO raster tiles, a commit-pinned district GeoJSON
-  dataset hosted by GitHub, and the BCRP statistics API.
-- Image classifications and repair-cost estimates can be wrong.
-- This is not legal advice or an official complaint channel.
+## Budget Data Integrity
+
+`utils/dataProcessing.ts` is the sole owner of the static 2025 budget snapshot
+and district coordinates. The repository does not contain the snapshot's
+primary-source URL, extraction date, query, or transformation evidence.
+Accordingly:
+
+- the values are labeled unverified in the interface;
+- they are excluded from generated complaint drafts;
+- they must not be cited as official MEF or municipal figures;
+- maintainers should replace the snapshot only with reproducible provenance,
+  source freshness, field definitions, and validation evidence.
+
+`constants.ts` owns only deterministic interface examples. Live BCRP indicators
+are shown only when the official API returns usable values; the app does not
+substitute estimates after a failure.
 
 ## Requirements
 
-- Node.js 22, or Node.js 24 and later
-- npm 10 or later
-- Deno 2 for Edge Function checks and tests
-- Supabase CLI for local database/function work and deployment
-- A Supabase project
-- A Gemini API key restricted to the Gemini API
+- Node.js 22.x and npm 10 or later
+- Deno 2.7.14 for Edge Function checks and tests
+- Supabase CLI for local database work or deployment
+- A Supabase project and a Gemini API key restricted to the Gemini API
 
-## Browser Setup
+CI validates Node.js 22 and Deno 2.7.14 on Linux. There is no automated
+cross-browser or cross-platform support matrix. The browser flow requires
+modern File APIs; geolocation is optional.
+
+## Local Setup
 
 ```bash
 npm ci
@@ -61,35 +69,32 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Set only browser-safe Supabase values in `.env.local`:
+Set only browser-safe values in `.env.local`:
 
 | Variable | Purpose |
 | --- | --- |
 | `VITE_SUPABASE_URL` | Supabase project URL |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Browser-safe Supabase publishable key |
-| `VITE_TURNSTILE_SITE_KEY` | Browser-safe Turnstile site key used by Supabase Auth |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Browser-safe publishable key |
+| `VITE_TURNSTILE_SITE_KEY` | Turnstile site key configured in Supabase Auth |
 
-Legacy `VITE_SUPABASE_ANON_KEY` is accepted for projects that have not migrated
-to publishable keys. Never add `GEMINI_API_KEY`, a Supabase secret key, or a
-service-role key to a `VITE_` variable.
+Legacy `VITE_SUPABASE_ANON_KEY` is accepted for projects that have not moved to
+publishable keys. Never expose `GEMINI_API_KEY`, a Supabase secret key, or a
+service-role key through a `VITE_` variable.
 
 ## Supabase Deployment
 
-Before production:
+Before deploying an operator-owned instance:
 
-1. Enable Anonymous Sign-Ins in Supabase Auth.
-2. Configure Cloudflare Turnstile in Supabase Auth, then put the matching
-   browser-safe site key in `VITE_TURNSTILE_SITE_KEY`. The Turnstile runtime is
-   loaded from Cloudflare's required official URL only when a new anonymous
-   session needs verification.
-3. Apply the migration:
+1. Enable Anonymous Sign-Ins and configure Cloudflare Turnstile in Supabase
+   Auth. Turnstile is a required production abuse control.
+2. Apply the rate-limit migration:
 
    ```bash
    supabase link --project-ref YOUR_PROJECT_REF
    supabase db push
    ```
 
-4. Configure Edge Function secrets:
+3. Configure server-side secrets:
 
    ```bash
    supabase secrets set \
@@ -98,21 +103,19 @@ Before production:
      ALLOWED_ORIGINS=https://your-production-origin.example
    ```
 
-   `ALLOWED_ORIGINS` is a comma-separated exact-origin allowlist. Include the
-   scheme and port when applicable. Do not use `*`.
+   `ALLOWED_ORIGINS` is a comma-separated exact-origin allowlist. Do not use
+   `*`.
 
-5. Deploy the authenticated function:
+4. Deploy the function:
 
    ```bash
    supabase functions deploy analyze-image
    ```
 
-6. Configure Gemini project quotas and billing alerts. Rotate any key that was
-   previously bundled into a browser build.
+5. Configure Gemini quotas and billing alerts, publish the operator's privacy
+   details, and verify all external-service terms before public use.
 
 ## Validation
-
-Run the clean release checks:
 
 ```bash
 deno install --frozen --entrypoint supabase/functions/analyze-image/index.ts
@@ -123,7 +126,7 @@ npm test
 npm run build
 ```
 
-With the local Supabase stack running, verify the migration and database lint:
+With the local Supabase stack running:
 
 ```bash
 supabase start
@@ -131,24 +134,36 @@ supabase db reset
 supabase db lint --local
 ```
 
-The Edge Function's live Gemini call is intentionally not part of repository
-tests because it requires deployment credentials and consumes provider quota.
+The repository test suite does not call Gemini because that requires deployment
+credentials and consumes provider quota.
 
-## Project Map
+## Source-of-Truth Map
 
-- `components/ReportFlow.tsx`: image-analysis flow and complaint draft.
-- `services/imageAnalysisService.ts`: browser validation, anonymous auth, and
-  authenticated Edge Function invocation.
-- `services/supabase.ts`: browser-safe Supabase client configuration.
-- `supabase/functions/analyze-image/`: server-only request validation, Gemini
-  call, structured-response validation, and tests.
-- `supabase/migrations/`: database-backed rate limit with denied direct table
-  access and a narrowly granted quota function.
-- `styles/index.css`: locally bundled fonts, icons, Leaflet CSS, and Tailwind
-  entrypoint.
-- `utils/dataProcessing.ts`: static budget aggregation and formatting.
+- `README.md`: public scope, setup, architecture, limits, and documentation map.
+- `PRIVACY.md`: repository behavior and operator privacy responsibilities.
+- `SECURITY.md`: supported-version and private-reporting path.
+- `CONTRIBUTING.md`: contribution workflow and evidence requirements.
+- `utils/dataProcessing.ts`: unverified static budget snapshot and coordinates.
+- `constants.ts`: deterministic sample-only interface records.
+- `components/ReportFlow.tsx`: photo-analysis and editable draft flow.
+- `services/imageAnalysisService.ts`: browser validation, auth, and function call.
+- `services/bcrpService.ts`: live BCRP parsing with no estimated fallback.
+- `supabase/functions/analyze-image/`: server validation, Gemini call, and tests.
+- `supabase/migrations/`: database-backed rate limiting.
+- `.github/workflows/ci.yml`: clean-install release checks.
 
-## Official References
+## External Data and Attribution
+
+- Map tiles: [OpenStreetMap contributors](https://www.openstreetmap.org/copyright)
+  and [CARTO](https://carto.com/attribution/).
+- District boundaries: commit-pinned
+  [peru-geojson-datasets](https://github.com/joseluisq/peru-geojson-datasets).
+- Economic indicators: [BCRP series API](https://estadisticas.bcrp.gob.pe/estadisticas/series/ayuda/api).
+
+External map, boundary, and indicator requests can fail. The app must show an
+unavailable state instead of inventing replacement data.
+
+## Security References
 
 - [Google API key security](https://ai.google.dev/gemini-api/docs/api-key?authuser=2&hl=en)
 - [Google image understanding](https://ai.google.dev/gemini-api/docs/generate-content/image-understanding?authuser=4)
@@ -157,11 +172,10 @@ tests because it requires deployment credentials and consumes provider quota.
 - [Supabase Edge Function secrets](https://supabase.com/docs/guides/functions/secrets)
 - [Supabase Anonymous Auth](https://supabase.com/docs/guides/auth/auth-anonymous)
 - [Supabase Edge Function rate limiting](https://supabase.com/docs/guides/functions/examples/rate-limiting)
-- [Cloudflare Turnstile client rendering](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/)
-- [Supabase Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security)
-- [Supabase database-function security](https://supabase.com/docs/guides/database/functions)
+- [Cloudflare Turnstile rendering](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/)
 
 ## License
 
-Apache License 2.0. See [LICENSE](LICENSE). Attribution notices are in
-[NOTICE](NOTICE).
+Repository-authored source and documentation are available under Apache-2.0.
+Third-party code, fonts, icons, map tiles, and datasets retain their own terms.
+See [LICENSE](LICENSE) and [NOTICE](NOTICE).

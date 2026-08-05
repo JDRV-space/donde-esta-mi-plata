@@ -19,14 +19,9 @@ interface MunicipalityMessage {
   district: string;
   problemType: string;
   coordinates: { lat: number; lng: number } | null;
-  budgetAllocated: number;
-  budgetSpent: number;
-  budgetRemaining: number;
-  estimatedCost: number;
   userDescription: string;
   trackingId: string;
   emailSubject: string;
-  emailTo: string;
 }
 
 export const ReportFlow: React.FC<ReportFlowProps> = ({ imageFile, districts, onClose }) => {
@@ -38,6 +33,7 @@ export const ReportFlow: React.FC<ReportFlowProps> = ({ imageFile, districts, on
   const [matchedDistrict, setMatchedDistrict] = useState<AggregatedDistrictData | null>(null);
   const [userDescription, setUserDescription] = useState<string>('');
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationStatus, setLocationStatus] = useState<'idle' | 'locating' | 'located' | 'unavailable'>('idle');
   const [trackingId, setTrackingId] = useState<string>('');
   const [municipalityMessage, setMunicipalityMessage] = useState<MunicipalityMessage | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -47,35 +43,9 @@ export const ReportFlow: React.FC<ReportFlowProps> = ({ imageFile, districts, on
     const url = URL.createObjectURL(imageFile);
     setPreviewUrl(url);
 
-    // Generate tracking ID
-    const newTrackingId = `DEMP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 9999)).padStart(4, '0')}`;
+    // Local reference only. The app does not register this ID with a municipality.
+    const newTrackingId = `DEMP-${new Date().getFullYear()}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
     setTrackingId(newTrackingId);
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        setUserLocation(loc);
-        if (districts.length > 0) {
-            let closest = districts[0];
-            let minDist = Infinity;
-            districts.forEach(d => {
-                const dist = Math.sqrt(Math.pow(d.latitude - loc.lat, 2) + Math.pow(d.longitude - loc.lng, 2));
-                if (dist < minDist) {
-                    minDist = dist;
-                    closest = d;
-                }
-            });
-            if (minDist < 0.1) {
-              setMatchedDistrict(closest);
-            } else {
-               setMatchedDistrict(districts.find(d => d.district === 'LIMA') || districts[0]);
-            }
-        }
-      },
-      (err) => {
-        setMatchedDistrict(districts.find(d => d.district === 'LIMA') || districts[0]);
-      }
-    );
 
     return () => URL.revokeObjectURL(url);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -127,14 +97,49 @@ export const ReportFlow: React.FC<ReportFlowProps> = ({ imageFile, districts, on
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageFile, captchaToken]);
 
+  const handleUseLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationStatus('unavailable');
+      return;
+    }
+
+    setLocationStatus('locating');
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const location = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        setUserLocation(location);
+
+        const closestDistrict = districts.reduce<AggregatedDistrictData | null>((closest, district) => {
+          if (!closest) return district;
+          const candidateDistance = Math.hypot(
+            district.latitude - location.lat,
+            district.longitude - location.lng,
+          );
+          const closestDistance = Math.hypot(
+            closest.latitude - location.lat,
+            closest.longitude - location.lng,
+          );
+          return candidateDistance < closestDistance ? district : closest;
+        }, null);
+
+        if (closestDistrict) {
+          const distance = Math.hypot(
+            closestDistrict.latitude - location.lat,
+            closestDistrict.longitude - location.lng,
+          );
+          if (distance < 0.1) setMatchedDistrict(closestDistrict);
+        }
+        setLocationStatus('located');
+      },
+      () => setLocationStatus('unavailable'),
+      { enableHighAccuracy: false, timeout: 10000 },
+    );
+  };
+
   const generateMunicipalityMessage = (): MunicipalityMessage => {
-    const budgetCatName = CATEGORY_MAPPING[analysis?.problem_type || 'other'];
-    const districtBudget = matchedDistrict?.categories[budgetCatName];
-
-    const allocated = districtBudget?.pim || 0;
-    const spent = districtBudget?.devengado || 0;
-    const remaining = allocated - spent;
-
     const today = new Date();
     const dateStr = today.toLocaleDateString(language === 'en' ? 'en-US' : 'es-PE', {
       year: 'numeric',
@@ -145,11 +150,10 @@ export const ReportFlow: React.FC<ReportFlowProps> = ({ imageFile, districts, on
     const fullText = `
 ===============================================
 ${t('formalRequest')}
-${t('citizenComplaint')}
 ===============================================
 
 ${language === 'en' ? 'Date' : 'Fecha'}: ${dateStr}
-${language === 'en' ? 'Tracking Code' : 'Codigo de Seguimiento'}: ${trackingId}
+${language === 'en' ? 'Personal Reference' : 'Referencia personal'}: ${trackingId}
 
 -----------------------------------------------
 1. ${t('locationInfo').toUpperCase()}
@@ -166,40 +170,26 @@ ${language === 'en' ? 'Technical Description' : 'Descripcion tecnica'}: ${analys
 ${language === 'en' ? 'Safety Risk' : 'Riesgo de seguridad'}: ${analysis?.safety_hazard ? (language === 'en' ? 'YES' : 'SI') : 'NO'}
 
 -----------------------------------------------
-3. ${language === 'en' ? 'BUDGET INFORMATION' : 'INFORMACION PRESUPUESTAL'}
------------------------------------------------
-${language === 'en' ? 'Category' : 'Categoria'}: ${t(`category.${budgetCatName}`)}
-${language === 'en' ? 'Allocated Budget (PIM)' : 'Presupuesto asignado (PIM)'}: ${formatCurrency(allocated)}
-${language === 'en' ? 'Executed Budget' : 'Presupuesto ejecutado'}: ${formatCurrency(spent)} (${districtBudget?.pct?.toFixed(1) || 0}%)
-${t('budgetAvailable')}: ${formatCurrency(remaining)}
-
------------------------------------------------
-4. ${t('estimatedCost').toUpperCase()}
------------------------------------------------
-${formatCurrency(analysis?.estimated_repair_cost_soles || 0)}
-
------------------------------------------------
-5. ${t('userComplaint').toUpperCase()}
+3. ${t('userComplaint').toUpperCase()}
 -----------------------------------------------
 "${userDescription || (language === 'en' ? 'No additional comments' : 'Sin comentarios adicionales')}"
 
 -----------------------------------------------
-6. ${t('photoAttached').toUpperCase()}
+4. ${t('photoAttached').toUpperCase()}
 -----------------------------------------------
 [${language === 'en' ? 'Attach the photo of the report' : 'Adjuntar la foto del reporte'}]
 
 ===============================================
-${language === 'en' ? 'FORMAL REQUEST' : 'SOLICITUD FORMAL'}
+${language === 'en' ? 'USER REQUEST' : 'SOLICITUD DEL USUARIO'}
 ===============================================
 
 ${t('requestResponse')}
 
 ${language === 'en' ? 'Sincerely,' : 'Atentamente,'}
-${language === 'en' ? 'Citizen of' : 'Ciudadano de'} ${matchedDistrict?.district || 'Lima'}
-Donde Esta Mi Plata - ${trackingId}
+${language === 'en' ? 'Resident reporting an issue in' : 'Persona que reporta un problema en'} ${matchedDistrict?.district || 'No identificado'}
 
 ---
-${language === 'en' ? 'Draft generated by Donde Esta Mi Plata as a user-edited civic request.' : 'Borrador generado por Donde Esta Mi Plata como solicitud ciudadana editable.'}
+${language === 'en' ? 'AI-assisted editable draft. Verify every detail before sending.' : 'Borrador editable asistido por IA. Verifica cada dato antes de enviarlo.'}
 ${language === 'en' ? 'No official tracking page was created. Keep this code only as your own reference:' : 'No se creo una pagina oficial de seguimiento. Guarda este codigo solo como referencia propia:'} ${trackingId}
 `.trim();
 
@@ -207,22 +197,14 @@ ${language === 'en' ? 'No official tracking page was created. Keep this code onl
     const problemTypeFormatted = (t(`problem.${analysis?.problem_type}`) || 'problema').toUpperCase();
     const emailSubject = `${t('citizenComplaint')} - ${matchedDistrict?.district || 'LIMA'} - ${problemTypeFormatted} - ${trackingId}`;
 
-    // Generated fallback address; verify the real municipality address before sending.
-    const emailTo = `municipalidad_${(matchedDistrict?.district || 'lima').toLowerCase().replace(/\s+/g, '')}@gob.pe`;
-
     return {
       fullText,
       district: matchedDistrict?.district || 'No identificado',
       problemType: analysis?.problem_type || 'other',
       coordinates: userLocation,
-      budgetAllocated: allocated,
-      budgetSpent: spent,
-      budgetRemaining: remaining,
-      estimatedCost: analysis?.estimated_repair_cost_soles || 0,
       userDescription,
       trackingId,
       emailSubject,
-      emailTo
     };
   };
 
@@ -232,7 +214,7 @@ ${language === 'en' ? 'No official tracking page was created. Keep this code onl
     // Build mailto URL with encoded subject and body
     const subject = encodeURIComponent(municipalityMessage.emailSubject);
     const body = encodeURIComponent(municipalityMessage.fullText);
-    const mailtoUrl = `mailto:${municipalityMessage.emailTo}?subject=${subject}&body=${body}`;
+    const mailtoUrl = `mailto:?subject=${subject}&body=${body}`;
 
     // Open email client
     window.location.href = mailtoUrl;
@@ -367,21 +349,21 @@ ${language === 'en' ? 'No official tracking page was created. Keep this code onl
           <div className="bg-retro-amber/20 border-2 border-retro-amber p-3 text-xs">
             <p className="font-bold mb-1"><i className="fa-solid fa-info-circle mr-1"></i> {language === 'en' ? 'Instructions:' : 'Instrucciones:'}</p>
             <ol className="list-decimal list-inside space-y-1 text-gray-700">
-              <li>{language === 'en' ? 'Click "Send Email" to open your mail client' : 'Haz clic en "Enviar Email" para abrir tu cliente de correo'}</li>
+              <li>{language === 'en' ? 'Review and edit every AI-generated detail' : 'Revisa y edita cada detalle generado por IA'}</li>
+              <li>{language === 'en' ? 'Find the municipality official address and add it in your mail client' : 'Busca la direccion oficial del municipio y agregala en tu cliente de correo'}</li>
               <li>{language === 'en' ? 'Attach the problem photo to the email' : 'Adjunta la foto del problema al correo'}</li>
               <li>{language === 'en' ? 'Download report for your records' : 'Descarga el reporte para tus registros'}</li>
-              <li>{language === 'en' ? 'Keep code' : 'Guarda el codigo'} <strong>{municipalityMessage.trackingId}</strong> {language === 'en' ? 'for tracking' : 'para seguimiento'}</li>
+              <li>{language === 'en' ? 'Keep code' : 'Guarda el codigo'} <strong>{municipalityMessage.trackingId}</strong> {language === 'en' ? 'only as your personal reference' : 'solo como referencia personal'}</li>
             </ol>
           </div>
 
           {/* Email destination info */}
           <div className="bg-gray-100 border-2 border-gray-300 p-3 text-xs">
-            <p className="font-bold text-gray-700 mb-1"><i className="fa-solid fa-envelope mr-1"></i> {language === 'en' ? 'Recipient:' : 'Destinatario:'}</p>
-            <p className="font-mono text-retro-orange">{municipalityMessage.emailTo}</p>
+            <p className="font-bold text-gray-700 mb-1"><i className="fa-solid fa-envelope mr-1"></i> {language === 'en' ? 'Recipient required' : 'Destinatario requerido'}</p>
             <p className="text-gray-500 mt-1 italic text-[10px]">
                 {language === 'en'
-                    ? '* Generated fallback email. Verify the real municipality address before sending.'
-                    : '* Direccion generada. Verifica la direccion real del municipio antes de enviar.'}
+                    ? 'The app does not generate or verify municipality addresses. Add an official recipient after the draft opens.'
+                    : 'La app no genera ni verifica direcciones municipales. Agrega un destinatario oficial cuando se abra el borrador.'}
             </p>
           </div>
 
@@ -523,6 +505,7 @@ ${language === 'en' ? 'No official tracking page was created. Keep this code onl
                 <div className="bg-gray-100 p-2 border border-gray-300 text-xs italic">
                     "{analysis?.description}"
                 </div>
+                <p className="text-[10px] text-gray-500">{t('flow.ai_unverified')}</p>
 
                 {/* Budget Context */}
                 {districtBudget && (
@@ -539,9 +522,41 @@ ${language === 'en' ? 'No official tracking page was created. Keep this code onl
                         <p className="text-[10px] text-right mt-1 text-gray-500">
                             {districtBudget.pct.toFixed(1)}% {t('flow.executed_dist')}
                         </p>
+                        <p className="text-[10px] text-gray-500 mt-2">{t('app.gov_disclaimer')}</p>
                      </div>
                 )}
             </div>
+        </div>
+
+        <div className="bg-white border-2 border-black shadow-retro p-4">
+          <label htmlFor="district-confirmation" className="text-xs font-bold text-black uppercase block mb-2">
+            {t('flow.confirm_district')}
+          </label>
+          <select
+            id="district-confirmation"
+            className="w-full border-2 border-black bg-retro-paper p-3 font-mono text-sm"
+            value={matchedDistrict?.district ?? ''}
+            onChange={(event) => setMatchedDistrict(
+              districts.find((district) => district.district === event.target.value) ?? null,
+            )}
+          >
+            <option value="">{t('flow.select_district')}</option>
+            {[...districts]
+              .sort((a, b) => a.district.localeCompare(b.district))
+              .map((district) => <option key={district.district} value={district.district}>{district.district}</option>)}
+          </select>
+          <button
+            type="button"
+            onClick={handleUseLocation}
+            disabled={locationStatus === 'locating'}
+            className="mt-3 w-full border-2 border-black p-2 text-xs font-bold uppercase hover:bg-retro-amber disabled:bg-gray-200"
+          >
+            <i className="fa-solid fa-location-crosshairs mr-2"></i>
+            {locationStatus === 'locating' ? t('flow.locating') : t('flow.use_location')}
+          </button>
+          <p className="text-[10px] text-gray-500 mt-2">
+            {locationStatus === 'located' ? t('flow.location_added') : locationStatus === 'unavailable' ? t('flow.location_unavailable') : t('flow.location_optional')}
+          </p>
         </div>
 
         {/* Card 2: User Input */}
@@ -563,8 +578,8 @@ ${language === 'en' ? 'No official tracking page was created. Keep this code onl
 
         <button
             onClick={handleSendReport}
-            disabled={userDescription.length < 5}
-            className={`mt-4 w-full py-4 font-serif font-black uppercase text-xl border-4 border-black shadow-retro transition-all flex items-center justify-center gap-2 mb-4 ${userDescription.length < 5 ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-retro-amber text-black hover:translate-y-1 hover:shadow-none hover:bg-retro-orange hover:text-white'}`}
+            disabled={userDescription.length < 5 || !matchedDistrict}
+            className={`mt-4 w-full py-4 font-serif font-black uppercase text-xl border-4 border-black shadow-retro transition-all flex items-center justify-center gap-2 mb-4 ${userDescription.length < 5 || !matchedDistrict ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-retro-amber text-black hover:translate-y-1 hover:shadow-none hover:bg-retro-orange hover:text-white'}`}
         >
             <i className="fa-solid fa-paper-plane"></i> {t('flow.send_btn')}
         </button>

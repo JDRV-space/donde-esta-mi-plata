@@ -1,15 +1,3 @@
-export interface BudgetRecord {
-  district: string;
-  year: number;
-  category: string;
-  pia: number;
-  pim: number;
-  devengado: number; // Spent
-  avance_pct: number;
-  latitude: number;
-  longitude: number;
-}
-
 export interface AggregatedDistrictData {
   district: string;
   latitude: number;
@@ -51,14 +39,11 @@ export interface CitizenReport {
   trackingId: string;
   district: string;
   type: string; // Legacy/Display type, but we prefer using analysis.problem_type
-  hoursAgo: number; // For localized time display
-  status: 'pending' | 'verified';
   icon: string;
   desc: string; // Legacy/Display desc, but we prefer generating it
   user_note?: string; // Unstructured input from user
   lat?: number;
   lng?: number;
-  timestamp: Date;
   imageUrl: string;
   analysis: ImageAnalysisResult;
   location: { lat: number; lng: number };

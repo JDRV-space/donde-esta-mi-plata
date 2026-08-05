@@ -1,5 +1,4 @@
-
-// Service to fetch data from BCRP API (Banco Central de Reserva del Perú)
+// Banco Central de Reserva del Perú series API.
 // Documentation: https://estadisticas.bcrp.gob.pe/estadisticas/series/ayuda/api
 
 export interface BcrpIndicator {
@@ -8,54 +7,56 @@ export interface BcrpIndicator {
   period: string;
 }
 
-export const fetchEconomicIndicators = async (): Promise<BcrpIndicator[]> => {
-  try {
-    // PD04640PD = Tipo de cambio interbancario venta (S/ por US$)
-    // PN01288PM = Índice de precios al consumidor (Lima Metropolitana)
-    // Note: This API enforces strict CORS policies. If accessed from a browser domain
-    // that isn't whitelisted, it will fail. We handle this by using fallback data.
-    const response = await fetch('https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PD04640PD-PN01288PM/json', {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json'
-        }
+interface BcrpPayload {
+  periods?: Array<{ name: string; values: string[] }>;
+}
+
+type Fetcher = typeof fetch;
+
+const SERIES = [
+  {
+    url: 'https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PD04640PD/json',
+    name: 'TC Venta (USD)',
+    format: (value: number) => `S/ ${value.toFixed(3)}`,
+  },
+  {
+    url: 'https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01288PM/json',
+    name: 'IPC Lima',
+    format: (value: number) => `${value.toFixed(2)} pts`,
+  },
+] as const;
+
+export const parseLatestIndicator = (
+  payload: BcrpPayload,
+  name: string,
+  format: (value: number) => string,
+): BcrpIndicator | null => {
+  const period = [...(payload.periods ?? [])]
+    .reverse()
+    .find((candidate) => Number.isFinite(Number(candidate.values[0])));
+  if (!period) return null;
+
+  return {
+    name,
+    value: format(Number(period.values[0])),
+    period: period.name,
+  };
+};
+
+export const fetchEconomicIndicators = async (
+  fetcher: Fetcher = fetch,
+): Promise<BcrpIndicator[]> => {
+  const requests = SERIES.map(async (series) => {
+    const response = await fetcher(series.url, {
+      headers: { Accept: 'application/json' },
     });
-    
-    if (!response.ok) {
-        // Throw to catch block without logging critical error
-        throw new Error(`BCRP Status: ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`BCRP request failed: ${response.status}`);
 
-    const data = await response.json();
-    const results: BcrpIndicator[] = [];
+    return parseLatestIndicator(await response.json(), series.name, series.format);
+  });
 
-    // Process Exchange Rate
-    if (data && data.length > 0 && data[0].periods) {
-       const lastPeriod = data[0].periods[data[0].periods.length - 1];
-       results.push({
-           name: 'TC Venta (USD)',
-           value: `S/ ${Number(lastPeriod.values[0]).toFixed(3)}`,
-           period: lastPeriod.name
-       });
-    }
-
-    // Process Inflation (IPC)
-    if (data && data.length > 1 && data[1].periods) {
-       const lastPeriod = data[1].periods[data[1].periods.length - 1];
-       results.push({
-           name: 'IPC Lima',
-           value: `${Number(lastPeriod.values[0]).toFixed(2)} pts`,
-           period: lastPeriod.name
-       });
-    }
-
-    return results;
-
-  } catch {
-    // Return realistic 2025 estimates to keep UI functional
-    return [
-        { name: 'TC Venta (USD)', value: 'S/ 3.380', period: 'Est. 2025' },
-        { name: 'IPC Lima', value: '138.2 pts', period: 'Est. 2025' }
-    ];
-  }
+  const results = await Promise.allSettled(requests);
+  return results.flatMap((result) => (
+    result.status === 'fulfilled' && result.value ? [result.value] : []
+  ));
 };
